@@ -125,7 +125,7 @@ const Register = () => {
   return (
     <div className="old-auth-container">
       <div className="registro-box">
-        <h2 className="titulo">Registro</h2>
+        <h2 className="titulo">Rest</h2>
         
         {(error || localError) && (
           <div className="auth-error">
