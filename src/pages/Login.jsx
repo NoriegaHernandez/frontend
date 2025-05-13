@@ -11,7 +11,7 @@ import '../styles/LoginFix.css';
 const renderIcon = (iconType) => {
   try {
     const iconPaths = {
-      usuario: '/usuario.png',
+      usuario: '/Usuario.png',
       contraseña: '/contra.png',
     };
     
