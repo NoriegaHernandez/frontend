@@ -5,14 +5,14 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/Auth.css';
 
 const iconPaths = {
-  usuario: '/src/assets/icons/usuario.png',
-  apellido: '/src/assets/icons/usuario.png',
-  contraseña: '/src/assets/icons/contra.png',
-  correo: '/src/assets/icons/correo.png',
-  telefono: '/src/assets/icons/telefono.png',
-  contrato: '/src/assets/icons/contrato.png',
-  direccion: '/src/assets/icons/direccion.png',
-  fecha: '/src/assets/icons/fecha.png',
+  usuario: '/usuario.png',
+  apellido: '/usuario.png',
+  contraseña: '/contra.png',
+  correo: '/correo.png',
+  telefono: '/telefono.png',
+  contrato: '/contrato.png',
+  direccion: '/direccion.png',
+  fecha: '/fecha.png',
 };
 
 const Register = () => {
