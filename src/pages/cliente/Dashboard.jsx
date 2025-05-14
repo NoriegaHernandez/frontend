@@ -9,8 +9,8 @@ const ClienteDashboard = () => {
   const navigate = useNavigate();
   const [currentExercise, setCurrentExercise] = useState(1);
   const totalExercises = 2; 
-  const [hasCoach, setHasCoach] = useState(false);
-  const [isFirstLogin, setIsFirstLogin] = useState(true);
+  const [hasCoach, setHasCoach] = useState(true);
+  const [isFirstLogin, setIsFirstLogin] = useState(false);
 
   useEffect(() => {
     // Verificar si el usuario está autenticado
