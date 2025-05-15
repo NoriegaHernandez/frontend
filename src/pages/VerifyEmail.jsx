@@ -144,7 +144,7 @@
 
 // export default VerifyEmail;
 
-// client/src/pages/VerifyEmail.jsx
+// En VerifyEmail.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -156,7 +156,6 @@ const VerifyEmail = () => {
   const [verificationStatus, setVerificationStatus] = useState('verifying'); 
   const [message, setMessage] = useState('Verificando tu correo electrónico...');
   const { setUser } = useAuth();
-  const [showDebug, setShowDebug] = useState(false);
   const [debug, setDebug] = useState({
     token: token ? token.substring(0, 10) + '...' : 'No token',
     apiUrl: import.meta.env.VITE_API_URL || 'No API URL env variable',
@@ -167,7 +166,7 @@ const VerifyEmail = () => {
   
   const navigate = useNavigate();
 
-  // Función mejorada para verificar el email
+  // Función para verificar el email
   const verifyEmail = async () => {
     if (!token) {
       console.log("No hay token en la URL");
@@ -178,7 +177,6 @@ const VerifyEmail = () => {
 
     try {
       console.log("VerifyEmail - Llamando a api.verifyEmail con token:", token.substring(0, 10) + "...");
-      console.log("URL completa:", window.location.href);
       
       // Incrementar contador de intentos en debug
       setDebug(prev => ({...prev, attempts: prev.attempts + 1}));
@@ -225,10 +223,9 @@ const VerifyEmail = () => {
         return;
       }
       
-      // Manejar diferentes tipos de errores
+      // Manejar diferentes tipos de errores según la respuesta
       if (error.response) {
-        console.log('Respuesta de error:', error.response.data);
-        
+        // Código específico para manejar diferentes códigos de error HTTP
         if (error.response.status === 400) {
           if (error.response.data.message && error.response.data.message.includes('expirado')) {
             setVerificationStatus('expired');
@@ -237,35 +234,26 @@ const VerifyEmail = () => {
             setVerificationStatus('invalid');
             setMessage('El enlace de verificación no es válido o ya ha sido utilizado.');
           }
-        } else if (error.response.status === 404) {
-          setVerificationStatus('invalid');
-          setMessage('El enlace de verificación no es válido.');
         } else {
           setVerificationStatus('error');
           setMessage('Ha ocurrido un error al verificar tu correo electrónico. Por favor, inténtalo de nuevo más tarde.');
         }
-      } else if (error.request) {
-        // La solicitud fue hecha pero no se recibió respuesta
+      } else {
         setVerificationStatus('error');
         setMessage('No se pudo conectar con el servidor. Verifica tu conexión a internet e inténtalo de nuevo.');
-      } else {
-        // Error en la configuración de la solicitud
-        setVerificationStatus('error');
-        setMessage('Ha ocurrido un error en la aplicación. Por favor, inténtalo de nuevo más tarde.');
       }
     }
   };
 
-  // Nueva función para hacer verificación directa (fallback)
-  const handleDirectVerification = async () => {
+  // Función para la verificación directa (fallback)
+  const handleDirectVerification = () => {
     try {
       setVerificationStatus('redirecting');
       setMessage('Redirigiendo para verificación directa...');
       
       // Usar el método de verificación directa que redirige al usuario
-      await api.verifyEmailDirect(token);
+      api.verifyEmailDirect(token);
       
-      // No deberíamos llegar aquí ya que verifyEmailDirect redirige al usuario
     } catch (error) {
       console.error('Error al intentar verificación directa:', error);
       setVerificationStatus('error');
@@ -280,31 +268,6 @@ const VerifyEmail = () => {
     // Iniciar proceso de verificación
     verifyEmail();
   }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Función para solicitar un nuevo enlace
-  const handleResendVerification = async () => {
-    try {
-      // Obtener el email del almacenamiento local
-      const email = localStorage.getItem('pendingVerificationEmail');
-      
-      if (!email) {
-        setMessage('No se pudo determinar tu correo electrónico. Por favor, intenta registrarte de nuevo.');
-        return;
-      }
-      
-      const response = await api.resendVerification(email);
-      setMessage(response.message || 'Se ha enviado un nuevo enlace de verificación a tu correo electrónico.');
-      
-    } catch (error) {
-      console.error('Error al reenviar verificación:', error);
-      setMessage('Ha ocurrido un error al enviar el enlace de verificación. Por favor, inténtalo de nuevo más tarde.');
-    }
-  };
-
-  // Función para mostrar información de depuración
-  const toggleDebug = () => {
-    setShowDebug(!showDebug);
-  };
 
   // Renderizar diferentes mensajes según el estado
   const renderContent = () => {
@@ -327,18 +290,8 @@ const VerifyEmail = () => {
           </div>
         );
         
-// Continuación de VerifyEmail.jsx
       case 'expired':
-        return (
-          <div className="verification-expired">
-            <div className="expired-icon">⚠️</div>
-            <h3>Enlace Expirado</h3>
-            <p>{message}</p>
-            <button onClick={handleResendVerification} className="verification-btn">
-              Enviar Nuevo Enlace
-            </button>
-          </div>
-        );
+        // Contenido para token expirado
         
       case 'offering-direct':
         return (
@@ -377,58 +330,13 @@ const VerifyEmail = () => {
               <Link to="/registro" className="verification-link">Volver a Registrarse</Link>
               <Link to="/login" className="verification-link">Iniciar Sesión</Link>
             </div>
-            
-            {/* Sección de depuración */}
-            <div className="debug-section">
-              <button onClick={toggleDebug} className="debug-button">
-                {showDebug ? 'Ocultar detalles técnicos' : 'Mostrar detalles técnicos'}
-              </button>
-              
-              {showDebug && (
-                <div className="debug-info">
-                  <h4>Información de depuración:</h4>
-                  <ul>
-                    <li>Token: {debug.token}</li>
-                    <li>API URL: {debug.apiUrl}</li>
-                    <li>URL completa: {debug.fullUrl}</li>
-                    <li>Intentos: {debug.attempts}</li>
-                    <li>Último error: {debug.lastError}</li>
-                  </ul>
-                  
-                  <div className="debug-actions">
-                    <button 
-                      onClick={() => verifyEmail()} 
-                      className="debug-retry-btn"
-                    >
-                      Reintentar verificación
-                    </button>
-                    
-                    <button 
-                      onClick={handleDirectVerification} 
-                      className="debug-direct-btn"
-                    >
-                      Verificación directa (fallback)
-                    </button>
-                    
-                    <a 
-                      href={`${debug.apiUrl}/api/auth/verify-email/${token}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="debug-direct-link"
-                    >
-                      Verificar directamente con API
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         );
     }
   };
 
   return (
-    <div className="old-auth-container">
+    <div className="auth-container">
       <div className="verification-box">
         <h2 className="titulo">Verificación de Correo</h2>
         {renderContent()}
@@ -438,4 +346,3 @@ const VerifyEmail = () => {
 };
 
 export default VerifyEmail;
-            

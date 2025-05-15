@@ -1093,4 +1093,22 @@ getClientMembershipHistory: async () => {
 }
 };
 
+const verifyEmail = async (token) => {
+  try {
+    console.log('Enviando solicitud de verificación con token:', token.substring(0, 10) + '...');
+    const response = await axios.get(`${apiUrl}/api/auth/verify-email/${token}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error en verifyEmail:', error);
+    throw error;
+  }
+};
+// Añadir un método para verificación directa (fallback)
+const verifyEmailDirect = async (token) => {
+  // Esta función redirige al usuario en lugar de retornar datos
+  window.location.href = `${apiUrl}/api/auth/verify-email-direct/${token}`;
+};
+
+// Exportarlos
+export { verifyEmail, verifyEmailDirect };
 export default api;
