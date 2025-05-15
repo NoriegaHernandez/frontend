@@ -144,7 +144,6 @@
 
 // export default VerifyEmail;
 
-
 // client/src/pages/VerifyEmail.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -168,6 +167,7 @@ const VerifyEmail = () => {
   
   const navigate = useNavigate();
 
+  // Función mejorada para verificar el email
   const verifyEmail = async () => {
     if (!token) {
       console.log("No hay token en la URL");
@@ -218,6 +218,13 @@ const VerifyEmail = () => {
         lastError: error.message || 'Error desconocido'
       }));
       
+      // Si ha habido 2 o más intentos, ofrecer la verificación directa
+      if (debug.attempts >= 2) {
+        setVerificationStatus('offering-direct');
+        setMessage('Estamos teniendo problemas para verificar tu correo. ¿Quieres intentar la verificación directa?');
+        return;
+      }
+      
       // Manejar diferentes tipos de errores
       if (error.response) {
         console.log('Respuesta de error:', error.response.data);
@@ -249,13 +256,30 @@ const VerifyEmail = () => {
     }
   };
 
+  // Nueva función para hacer verificación directa (fallback)
+  const handleDirectVerification = async () => {
+    try {
+      setVerificationStatus('redirecting');
+      setMessage('Redirigiendo para verificación directa...');
+      
+      // Usar el método de verificación directa que redirige al usuario
+      await api.verifyEmailDirect(token);
+      
+      // No deberíamos llegar aquí ya que verifyEmailDirect redirige al usuario
+    } catch (error) {
+      console.error('Error al intentar verificación directa:', error);
+      setVerificationStatus('error');
+      setMessage('Error al intentar la verificación directa. Por favor, contacta a soporte.');
+    }
+  };
+
   useEffect(() => {
     console.log("VerifyEmail - Componente montado");
     console.log("Token recibido:", token);
     
     // Iniciar proceso de verificación
     verifyEmail();
-  }, [token, navigate, setUser]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Función para solicitar un nuevo enlace
   const handleResendVerification = async () => {
@@ -303,6 +327,7 @@ const VerifyEmail = () => {
           </div>
         );
         
+// Continuación de VerifyEmail.jsx
       case 'expired':
         return (
           <div className="verification-expired">
@@ -312,6 +337,31 @@ const VerifyEmail = () => {
             <button onClick={handleResendVerification} className="verification-btn">
               Enviar Nuevo Enlace
             </button>
+          </div>
+        );
+        
+      case 'offering-direct':
+        return (
+          <div className="verification-direct-offer">
+            <div className="question-icon">❓</div>
+            <h3>Problemas con la Verificación</h3>
+            <p>{message}</p>
+            <div className="verification-actions">
+              <button onClick={handleDirectVerification} className="verification-btn primary">
+                Intentar Verificación Directa
+              </button>
+              <button onClick={verifyEmail} className="verification-btn secondary">
+                Reintentar Verificación Normal
+              </button>
+            </div>
+          </div>
+        );
+        
+      case 'redirecting':
+        return (
+          <div className="verification-loading">
+            <div className="spinner"></div>
+            <p>{message}</p>
           </div>
         );
         
@@ -353,6 +403,13 @@ const VerifyEmail = () => {
                       Reintentar verificación
                     </button>
                     
+                    <button 
+                      onClick={handleDirectVerification} 
+                      className="debug-direct-btn"
+                    >
+                      Verificación directa (fallback)
+                    </button>
+                    
                     <a 
                       href={`${debug.apiUrl}/api/auth/verify-email/${token}`} 
                       target="_blank" 
@@ -381,3 +438,4 @@ const VerifyEmail = () => {
 };
 
 export default VerifyEmail;
+            
