@@ -107,10 +107,6 @@ const Login = () => {
 
         <h2 className="titulo">INICIAR SESIÓN 2</h2>
         <p className="auth-subtitle">ACCEDE A TU CUENTA DE FITNESS GYM</p>
-
-        <h2 className="titulo">INICIAR SESIÓN</h2>
-        <p className="auth-subtitle">kanye is a nazi</p>
-
         
         {error && !verificationNeeded && (
           <div className="auth-error">
