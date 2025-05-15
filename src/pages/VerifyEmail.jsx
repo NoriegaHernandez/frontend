@@ -261,13 +261,32 @@ const VerifyEmail = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("VerifyEmail - Componente montado");
-    console.log("Token recibido:", token);
-    
-    // Iniciar proceso de verificación
-    verifyEmail();
-  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
+useEffect(() => {
+  const verifyToken = async () => {
+    try {
+      const response = await fetch(`https://backend-h016.onrender.com/api/auth/verify-email/${token}`);
+      const data = await response.json();
+      
+      if (data.message) {
+        setVerificationStatus('success');
+        setMessage(data.message);
+        
+        // Redirigir después de 3 segundos
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error al verificar:', error);
+      setVerificationStatus('error');
+      setMessage('Error al verificar cuenta. Por favor, contacta a soporte.');
+    }
+  };
+  
+  if (token) {
+    verifyToken();
+  }
+}, [token, navigate]);
 
   // Renderizar diferentes mensajes según el estado
   const renderContent = () => {
