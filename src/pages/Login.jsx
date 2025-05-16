@@ -136,7 +136,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-box">
 
-        <h2 className="titulo">INICIAR SESIÓN 2</h2>
+        <h2 className="titulo">INICIAR SESIÓN</h2>
         <p className="auth-subtitle">ACCEDE A TU CUENTA DE FITNESS GYM</p>
         
         {error && !verificationNeeded && (
