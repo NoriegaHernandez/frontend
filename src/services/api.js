@@ -59,18 +59,17 @@ const api = {
     }
   },
 
-
 testRegister: async (userData) => {
-  try {
-    const response = await axiosInstance.post('/auth/test-register', userData);
-    return response.data;
-  } catch (error) {
-    console.error('Error en test-register:', error);
-    throw error;
-  }
-},
-  
-  verifyToken: async () => {
+    try {
+      const response = await axiosInstance.post('/auth/test-register', userData);
+      return response.data;
+    } catch (error) {
+      console.error('Error en test-register:', error);
+      throw error;
+    }
+  },
+
+ verifyToken: async () => {
     try {
       const response = await axiosInstance.post('/auth/verify-token');
       return response.data;
@@ -82,116 +81,270 @@ testRegister: async (userData) => {
   
 
   
-getCurrentUser: async () => {
-  try {
-    console.log('Iniciando solicitud getCurrentUser');
+// getCurrentUser: async () => {
+//   try {
+//     console.log('Iniciando solicitud getCurrentUser');
     
-    // Verificar si hay token en localStorage
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error('No hay token almacenado en localStorage');
-      throw new Error('No hay token de autenticación');
-    }
+//     // Verificar si hay token en localStorage
+//     const token = localStorage.getItem('token');
+//     if (!token) {
+//       console.error('No hay token almacenado en localStorage');
+//       throw new Error('No hay token de autenticación');
+//     }
     
 
-    console.log('Cabeceras de la solicitud:', {
-      'Content-Type': 'application/json',
-      'x-auth-token': token.substring(0, 10) + '...'
-    });
+//     console.log('Cabeceras de la solicitud:', {
+//       'Content-Type': 'application/json',
+//       'x-auth-token': token.substring(0, 10) + '...'
+//     });
     
-    // Hacer la solicitud con manejo explícito de respuesta
-    const response = await axiosInstance.get('/auth/me');
+//     // Hacer la solicitud con manejo explícito de respuesta
+//     const response = await axiosInstance.get('/auth/me');
     
-    // Verificar si la respuesta es exitosa
-    if (response.status !== 200) {
-      console.error('Respuesta con código de error:', response.status);
-      throw new Error(`Error en la respuesta: ${response.status}`);
-    }
+//     // Verificar si la respuesta es exitosa
+//     if (response.status !== 200) {
+//       console.error('Respuesta con código de error:', response.status);
+//       throw new Error(`Error en la respuesta: ${response.status}`);
+//     }
     
-    // Verificar si hay datos en la respuesta
-    if (!response.data) {
-      console.error('La respuesta no contiene datos');
-      throw new Error('La respuesta no contiene datos del usuario');
-    }
+//     // Verificar si hay datos en la respuesta
+//     if (!response.data) {
+//       console.error('La respuesta no contiene datos');
+//       throw new Error('La respuesta no contiene datos del usuario');
+//     }
     
-    console.log('Datos del usuario obtenidos correctamente:', {
-      id: response.data.id_usuario,
-      nombre: response.data.nombre,
-      email: response.data.email,
-      tipoUsuario: response.data.tipo_usuario
-    });
+//     console.log('Datos del usuario obtenidos correctamente:', {
+//       id: response.data.id_usuario,
+//       nombre: response.data.nombre,
+//       email: response.data.email,
+//       tipoUsuario: response.data.tipo_usuario
+//     });
     
-    return response.data;
-  } catch (error) {
-    // Manejo detallado de errores
-    if (error.response) {
-      // El servidor respondió con un código de error
-      console.error('Error de respuesta del servidor:', {
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers
+//     return response.data;
+//   } catch (error) {
+//     // Manejo detallado de errores
+//     if (error.response) {
+//       // El servidor respondió con un código de error
+//       console.error('Error de respuesta del servidor:', {
+//         status: error.response.status,
+//         data: error.response.data,
+//         headers: error.response.headers
+//       });
+      
+//       // Mensaje específico según el código de error
+//       if (error.response.status === 401) {
+//         console.error('Error de autenticación: Token inválido o expirado');
+//         // Limpiar token y redirigir al login
+//         localStorage.removeItem('token');
+//         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
+//       } else if (error.response.status === 404) {
+//         console.error('Ruta no encontrada. Verificar URL de la API');
+//         throw new Error('Servicio no disponible. Por favor contacte al administrador.');
+//       } else {
+//         console.error(`Error ${error.response.status}: ${error.response.data.message || 'Error del servidor'}`);
+//         throw new Error(error.response.data.message || 'Error al obtener datos del usuario');
+//       }
+//     } else if (error.request) {
+//       // La solicitud fue hecha pero no se recibió respuesta
+//       console.error('No se recibió respuesta del servidor:', error.request);
+//       throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
+//     } else {
+//       // Error en la configuración de la solicitud
+//       console.error('Error al configurar la solicitud:', error.message);
+//       throw new Error('Error en la aplicación. Por favor contacte al administrador.');
+//     }
+//   }
+//   },
+  getCurrentUser: async () => {
+    try {
+      console.log('Iniciando solicitud getCurrentUser');
+      
+      // Verificar si hay token en localStorage
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No hay token almacenado en localStorage');
+        throw new Error('No hay token de autenticación');
+      }
+      
+      console.log('Cabeceras de la solicitud:', {
+        'Content-Type': 'application/json',
+        'x-auth-token': token.substring(0, 10) + '...'
       });
       
-      // Mensaje específico según el código de error
-      if (error.response.status === 401) {
-        console.error('Error de autenticación: Token inválido o expirado');
-        // Limpiar token y redirigir al login
-        localStorage.removeItem('token');
-        throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
-      } else if (error.response.status === 404) {
-        console.error('Ruta no encontrada. Verificar URL de la API');
-        throw new Error('Servicio no disponible. Por favor contacte al administrador.');
-      } else {
-        console.error(`Error ${error.response.status}: ${error.response.data.message || 'Error del servidor'}`);
-        throw new Error(error.response.data.message || 'Error al obtener datos del usuario');
+      // Hacer la solicitud con manejo explícito de respuesta
+      const response = await axiosInstance.get('/auth/me');
+      
+      // Verificar si la respuesta es exitosa
+      if (response.status !== 200) {
+        console.error('Respuesta con código de error:', response.status);
+        throw new Error(`Error en la respuesta: ${response.status}`);
       }
-    } else if (error.request) {
-      // La solicitud fue hecha pero no se recibió respuesta
-      console.error('No se recibió respuesta del servidor:', error.request);
-      throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
-    } else {
-      // Error en la configuración de la solicitud
-      console.error('Error al configurar la solicitud:', error.message);
-      throw new Error('Error en la aplicación. Por favor contacte al administrador.');
+      
+      // Verificar si hay datos en la respuesta
+      if (!response.data) {
+        console.error('La respuesta no contiene datos');
+        throw new Error('La respuesta no contiene datos del usuario');
+      }
+      
+      console.log('Datos del usuario obtenidos correctamente:', {
+        id: response.data.id_usuario,
+        nombre: response.data.nombre,
+        email: response.data.email,
+        tipoUsuario: response.data.tipo_usuario
+      });
+      
+      return response.data;
+    } catch (error) {
+      // Manejo detallado de errores
+      if (error.response) {
+        // El servidor respondió con un código de error
+        console.error('Error de respuesta del servidor:', {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+        
+        // Mensaje específico según el código de error
+        if (error.response.status === 401) {
+          console.error('Error de autenticación: Token inválido o expirado');
+          // Limpiar token y redirigir al login
+          localStorage.removeItem('token');
+          throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
+        } else if (error.response.status === 404) {
+          console.error('Ruta no encontrada. Verificar URL de la API');
+          throw new Error('Servicio no disponible. Por favor contacte al administrador.');
+        } else {
+          console.error(`Error ${error.response.status}: ${error.response.data.message || 'Error del servidor'}`);
+          throw new Error(error.response.data.message || 'Error al obtener datos del usuario');
+        }
+      } else if (error.request) {
+        // La solicitud fue hecha pero no se recibió respuesta
+        console.error('No se recibió respuesta del servidor:', error.request);
+        throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
+      } else {
+        // Error en la configuración de la solicitud
+        console.error('Error al configurar la solicitud:', error.message);
+        throw new Error('Error en la aplicación. Por favor contacte al administrador.');
+      }
     }
-  }
   },
 
 
 // Función para verificar el email con el token
-verifyEmail: async (token) => {
-  try {
-    const response = await axiosInstance.get(`/auth/verify-email/${token}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error al verificar email:', error);
-    throw error;
-  }
-},
+// verifyEmail: async (token) => {
+//   try {
+//     const response = await axiosInstance.get(`/auth/verify-email/${token}`);
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error al verificar email:', error);
+//     throw error;
+//   }
+// },
+// ACTUALIZACIÓN IMPORTANTE: Función para verificar email con timeout y mejor manejo de errores
+  verifyEmail: async (token) => {
+    try {
+      console.log("API - Iniciando verificación de email");
+      console.log("Token a verificar:", token.substring(0, 10) + "...");
+      
+      // URL correcta para verificación
+      const url = `/auth/verify-email/${token}`;
+      console.log("URL de solicitud:", API_URL + url);
+      
+      // Verificar que el token sea válido
+      if (!token || token.length < 10) {
+        console.error('Token de verificación inválido o muy corto');
+        throw new Error('Token de verificación inválido');
+      }
+      
+      // Realizar la solicitud con timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 segundos timeout
+      
+      const response = await axiosInstance.get(url, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId); // Limpiar el timeout si la solicitud es exitosa
+      
+      // Imprimir respuesta completa
+      console.log("Respuesta completa de verificación:", response);
+      
+      // Si la verificación fue exitosa
+      if (response.data) {
+        console.log("Datos de respuesta:", response.data);
+        return response.data;
+      } else {
+        console.error("La respuesta no contiene datos");
+        throw new Error("La respuesta del servidor no contiene datos");
+      }
+    } catch (error) {
+      // Log detallado del error
+      console.error("Error en verificación de email:", error);
+      
+      if (error.response) {
+        console.error("Detalles de error de respuesta:", {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        console.error("Error al configurar la solicitud:", error.message);
+      }
+      
+      // Si el error fue por timeout, dar un mensaje más específico
+      if (error.name === 'AbortError') {
+        throw new Error("La verificación tomó demasiado tiempo. Por favor, intenta de nuevo.");
+      }
+      
+      throw error;
+    }
+  },
+// NUEVO MÉTODO: Verificación directa (fallback)
+  verifyEmailDirect: async (token) => {
+    try {
+      console.log("API - Iniciando verificación directa de email");
+      
+      // Construir URL completa para redirección directa
+      const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const directUrl = `${backendUrl}/api/auth/verify-email-direct/${token}`;
+      
+      console.log("Redirigiendo a URL directa:", directUrl);
+      
+      // Redirigir al usuario a esta URL
+      window.location.href = directUrl;
+      
+      // No es necesario retornar nada ya que estamos redirigiendo
+      return { redirecting: true };
+    } catch (error) {
+      console.error("Error al preparar redirección directa:", error);
+      throw error;
+    }
+  },
 
 
-// Función para solicitar restablecimiento de contraseña
-forgotPassword: async (email) => {
-  try {
-    const response = await axiosInstance.post('/auth/forgot-password', { email });
-    return response.data;
-  } catch (error) {
-    console.error('Error al solicitar restablecimiento de contraseña:', error);
-    throw error;
-  }
-},
+  // Función para solicitar restablecimiento de contraseña
+  forgotPassword: async (email) => {
+    try {
+      const response = await axiosInstance.post('/auth/forgot-password', { email });
+      return response.data;
+    } catch (error) {
+      console.error('Error al solicitar restablecimiento de contraseña:', error);
+      throw error;
+    }
+  },
 
-// Función para verificar token de restablecimiento
-verifyResetToken: async (token) => {
-  try {
-    const response = await axiosInstance.get(`/auth/reset-password/${token}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error al verificar token de restablecimiento:', error);
-    throw error;
-  }
-},
-
+  // Función para verificar token de restablecimiento
+  verifyResetToken: async (token) => {
+    try {
+      const response = await axiosInstance.get(`/auth/reset-password/${token}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al verificar token de restablecimiento:', error);
+      throw error;
+    }
+  },
 
 // Función para restablecer contraseña
 resetPassword: async (token, password) => {
@@ -204,16 +357,16 @@ resetPassword: async (token, password) => {
   }
 },
 
-// Función para reenviar el correo de verificación
-resendVerification: async (email) => {
-  try {
-    const response = await axiosInstance.post('/auth/resend-verification', { email });
-    return response.data;
-  } catch (error) {
-    console.error('Error al reenviar verificación:', error);
-    throw error;
-  }
-},
+ // Función para reenviar el correo de verificación
+  resendVerification: async (email) => {
+    try {
+      const response = await axiosInstance.post('/auth/resend-verification', { email });
+      return response.data;
+    } catch (error) {
+      console.error('Error al reenviar verificación:', error);
+      throw error;
+    }
+  },
 
 // Coaches - Admin
 getCoaches: async () => {
@@ -925,7 +1078,76 @@ cancelClientMembership: async (id_suscripcion) => {
     throw error;
   }
 },
+requestCoach: async (coachId) => {
+  try {
+    console.log(`Enviando solicitud para el entrenador ID: ${coachId}`);
+    
+    // Verificar que se está enviando un ID válido
+    if (!coachId) {
+      throw new Error('ID de entrenador no válido');
+    }
+    
+    const response = await axiosInstance.post(`/client/request-coach/${coachId}`);
+    console.log('Respuesta de solicitud exitosa:', response.data);
+    return response;
+  } catch (error) {
+    console.error('Error al solicitar entrenador:', error);
+    
+    // Detallar el error para ayudar a depurar
+    if (error.response) {
+      console.error('Datos de error del servidor:', error.response.data);
+      console.error('Estado HTTP:', error.response.status);
+      
+      if (error.response.status === 500) {
+        throw new Error('Ha ocurrido un problema en el servidor. El equipo técnico ha sido notificado. Por favor, intenta más tarde.');
+      } else if (error.response.status === 404) {
+        throw new Error('La funcionalidad para solicitar entrenador no está disponible en este momento.');
+      } else if (error.response.status === 409) {
+        throw new Error('Ya existe una solicitud pendiente o tienes un entrenador asignado.');
+      } else {
+        throw new Error(error.response.data?.message || 'Error al procesar tu solicitud. Por favor, inténtalo de nuevo.');
+      }
+    } else if (error.request) {
+      throw new Error('No se pudo conectar con el servidor. Verifica tu conexión a internet.');
+    } else {
+      throw new Error('Error en la aplicación. Por favor contacta al administrador.');
+    }
+  }
+},
+// Añade estas funciones al objeto api en api.js
 
+// Obtener información de un cliente específico
+getClientById: async (clientId) => {
+  try {
+    const response = await axiosInstance.get(`/coach/clients/${clientId}`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener información del cliente:', error);
+    throw error;
+  }
+},
+
+// Obtener rutinas de un cliente
+getClientRoutines: async (clientId) => {
+  try {
+    const response = await axiosInstance.get(`/coach/clients/${clientId}/routines`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener rutinas del cliente:', error);
+    throw error;
+  }
+},
+
+// Guardar rutina de un cliente
+saveClientRoutine: async (clientId, routineData) => {
+  try {
+    const response = await axiosInstance.post(`/coach/clients/${clientId}/routines`, routineData);
+    return response;
+  } catch (error) {
+    console.error('Error al guardar rutina del cliente:', error);
+    throw error;
+  }
+},
 // Esta función es opcional, sólo si necesitas ver el historial
 getClientMembershipHistory: async () => {
   try {
@@ -940,4 +1162,22 @@ getClientMembershipHistory: async () => {
 }
 };
 
+const verifyEmail = async (token) => {
+  try {
+    console.log('Enviando solicitud de verificación con token:', token.substring(0, 10) + '...');
+    const response = await axios.get(`${apiUrl}/api/auth/verify-email/${token}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error en verifyEmail:', error);
+    throw error;
+  }
+};
+// Añadir un método para verificación directa (fallback)
+const verifyEmailDirect = async (token) => {
+  // Esta función redirige al usuario en lugar de retornar datos
+  window.location.href = `${apiUrl}/api/auth/verify-email-direct/${token}`;
+};
+
+// Exportarlos
+export { verifyEmail, verifyEmailDirect };
 export default api;

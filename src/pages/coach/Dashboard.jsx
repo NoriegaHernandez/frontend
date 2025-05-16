@@ -13,6 +13,9 @@ const CoachDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('clients');
   const [notification, setNotification] = useState(null);
+  // Nuevos estados para el modal de detalles
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [showClientDetails, setShowClientDetails] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,7 +24,15 @@ const CoachDashboard = () => {
         
         // Obtener clientes asignados
         const clientsResponse = await api.getCoachClients();
-        setClients(clientsResponse.data || []);
+        console.log("Clientes obtenidos:", clientsResponse.data); // Para depurar
+        
+        // Verificar que los datos son correctos antes de asignarlos
+        if (Array.isArray(clientsResponse.data)) {
+          setClients(clientsResponse.data || []);
+        } else {
+          console.error("Respuesta de clientes no es un array:", clientsResponse);
+          setClients([]);
+        }
         
         // Obtener solicitudes pendientes
         const requestsResponse = await api.getCoachPendingRequests();
@@ -118,6 +129,26 @@ const CoachDashboard = () => {
     }
   };
 
+  // Nueva función para mostrar detalles del cliente
+  const handleViewDetails = (client) => {
+    console.log("Cliente seleccionado:", client); // Para debuggear
+    if (!client) {
+      console.error("Cliente es null o undefined");
+      return;
+    }
+    // Crear una copia limpia del objeto cliente
+    const clientCopy = JSON.parse(JSON.stringify(client));
+    setSelectedClient(clientCopy);
+    setShowClientDetails(true);
+  };
+
+  // Función para cerrar el modal de detalles
+  const handleCloseDetails = () => {
+    console.log("Cerrando modal"); // Para debuggear
+    setShowClientDetails(false);
+    setSelectedClient(null); // También limpiar el cliente seleccionado
+  };
+
   return (
     <div className="coach-container">
       <div className="coach-sidebar">
@@ -139,6 +170,96 @@ const CoachDashboard = () => {
         {notification && (
           <div className={`notification ${notification.type}`}>
             {notification.message}
+          </div>
+        )}
+        
+        {/* Modal de detalles del cliente */}
+        {showClientDetails && selectedClient && (
+          <div className="client-details-modal">
+            <div className="client-details-content">
+              <div className="client-details-header">
+                <h2>Detalles del Cliente</h2>
+                <button className="close-button close-modal-button" onClick={handleCloseDetails}>×</button>
+              </div>
+              
+              <div className="client-details-body">
+                {/* Sección de Información Básica */}
+                <div className="client-details-section">
+                  <h3>Información Básica</h3>
+                  <div className="client-data-grid">
+                    <div className="client-data-item">
+                      <span className="data-label">Nombre:</span>
+                      <span className="data-value">{selectedClient.nombre || 'No disponible'}</span>
+                    </div>
+                    <div className="client-data-item">
+                      <span className="data-label">Email:</span>
+                      <span className="data-value">{selectedClient.email || 'No disponible'}</span>
+                    </div>
+                    <div className="client-data-item">
+                      <span className="data-label">Teléfono:</span>
+                      <span className="data-value">{selectedClient.telefono || 'No registrado'}</span>
+                    </div>
+                    <div className="client-data-item">
+                      <span className="data-label">Fecha de asignación:</span>
+                      <span className="data-value">
+                        {selectedClient.fecha_asignacion ? new Date(selectedClient.fecha_asignacion).toLocaleDateString() : 'No disponible'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sección de Información Física */}
+                <div className="client-details-section physical-section">
+                  <h3>Información Física</h3>
+                  <div className="empty-physical-info">
+                    <p>No hay información física registrada para este cliente.</p>
+                    <p>Esta funcionalidad estará disponible próximamente.</p>
+                  </div>
+                  
+                  <div className="physical-data-placeholder">
+                    <div className="client-data-grid">
+                      <div className="client-data-item">
+                        <span className="data-label">Altura:</span>
+                        <span className="data-value">--</span>
+                      </div>
+                      <div className="client-data-item">
+                        <span className="data-label">Peso:</span>
+                        <span className="data-value">--</span>
+                      </div>
+                      <div className="client-data-item">
+                        <span className="data-label">IMC:</span>
+                        <span className="data-value">--</span>
+                      </div>
+                      <div className="client-data-item">
+                        <span className="data-label">% Grasa corporal:</span>
+                        <span className="data-value">--</span>
+                      </div>
+                      <div className="client-data-item">
+                        <span className="data-label">Masa muscular:</span>
+                        <span className="data-value">--</span>
+                      </div>
+                      <div className="client-data-item">
+                        <span className="data-label">Última actualización:</span>
+                        <span className="data-value">--</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Botones de acción */}
+                <div className="modal-actions">
+                  <button 
+                    className="coach-button primary"
+                    onClick={() => navigate(`/coach/rutina/${selectedClient.id_usuario}`)}
+                  >
+                    Asignar rutina
+                  </button>
+                  <button className="coach-button secondary">
+                    Registrar medidas
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
         
@@ -200,10 +321,16 @@ const CoachDashboard = () => {
                       </div>
                     </div>
                     <div className="client-actions">
-                      <button className="coach-button primary" onClick={() => navigate(`/coach/cliente/${client.id_usuario}`)}>
+                      <button 
+                        className="coach-button primary" 
+                        onClick={() => handleViewDetails(client)}
+                      >
                         Ver detalles
                       </button>
-                      <button className="coach-button secondary" onClick={() => navigate(`/coach/rutina/${client.id_usuario}`)}>
+                      <button 
+                        className="coach-button secondary" 
+                        onClick={() => navigate(`/coach/rutina/${client.id_usuario}`)}
+                      >
                         Asignar rutina
                       </button>
                     </div>

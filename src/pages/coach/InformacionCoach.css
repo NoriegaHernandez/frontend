@@ -1,0 +1,317 @@
+/* client/src/pages/coach/InformacionCoach.css */
+
+/* Estilos específicos para la página de información del entrenador */
+.profile-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 30px;
+  position: relative;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 15px;
+}
+
+.profile-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+.edit-button {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  padding: 8px 15px;
+  transition: all 0.3s ease;
+}
+
+.edit-button:hover {
+  background-color: #e0e0e0;
+}
+
+.edit-icon {
+  font-size: 1.1rem;
+}
+
+.profile-avatar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #3a7bd5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  color: white;
+  font-weight: bold;
+}
+
+.profile-info {
+  text-align: center;
+}
+
+.profile-info h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.email {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 25px;
+  text-align: left;
+}
+
+/* Para la biografía, que ocupe ambas columnas */
+.coach-biography {
+  grid-column: span 2;
+}
+
+.info-item {
+  margin-bottom: 5px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.info-item:hover {
+  background-color: #f0f0f0;
+}
+
+.label {
+  display: block;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.value {
+  display: block;
+  color: #333;
+  font-size: 1rem;
+  word-wrap: break-word;
+}
+
+/* Estilos para el modo de edición */
+.edit-mode {
+  padding: 30px;
+}
+
+.edit-form-container {
+  max-width: 100%;
+}
+
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+input, textarea {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  width: 100%;
+  transition: border-color 0.3s;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #3a7bd5;
+  box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.2);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-buttons {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.cancel-button, .save-button {
+  padding: 12px 25px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+
+.cancel-button {
+  background-color: #f0f0f0;
+  color: #555;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.save-button {
+  background-color: #3a7bd5;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #2c5ba2;
+}
+
+.save-button:disabled, .cancel-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Estilos para el mensaje de actualización */
+.update-message {
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Sección de información adicional */
+.information-section {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 25px;
+  margin-top: 30px;
+}
+
+.information-section h3 {
+  color: #333;
+  font-size: 1.3rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.information-section p {
+  color: #555;
+  line-height: 1.6;
+}
+
+.tips-section {
+  background-color: #eff8ff;
+  border-left: 4px solid #3a7bd5;
+  padding: 15px 20px;
+  margin: 20px 0;
+  border-radius: 0 5px 5px 0;
+}
+
+.tips-section h4 {
+  color: #3a7bd5;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.tips-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.tips-section li {
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.contact-info {
+  margin-top: 25px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 20px;
+}
+
+.contact-info h4 {
+  margin-top: 0;
+  color: #333;
+}
+
+.contact-info p {
+  margin: 5px 0;
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .coach-biography {
+    grid-column: 1;
+  }
+  
+  form {
+    grid-template-columns: 1fr;
+  }
+  
+  .full-width {
+    grid-column: auto;
+  }
+  
+  .form-buttons {
+    grid-column: 1;
+  }
+}

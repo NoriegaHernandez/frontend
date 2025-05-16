@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import '../styles/Auth.css';
 import '../styles/LoginFix.css';
+import { useLocation } from 'react-router-dom';
 
 const renderIcon = (iconType) => {
   try {
@@ -31,6 +32,7 @@ const Login = () => {
     email: '',
     password: ''
   });
+  
   const [showPassword, setShowPassword] = useState(false);
   const [verificationNeeded, setVerificationNeeded] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState('');
@@ -45,6 +47,35 @@ const Login = () => {
       ...formData,
       [name]: value
     });
+      const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const isVerified = queryParams.get('verified') === 'true';
+  const verificationError = queryParams.get('verificationError') === 'true';
+  const verificationMessage = queryParams.get('message');
+  const alreadyVerified = queryParams.get('alreadyVerified') === 'true';
+    // Usar useEffect para manejar los parámetros de URL al cargar
+  useEffect(() => {
+    if (isVerified) {
+      // Mostrar mensaje de verificación exitosa
+      setCustomMessage({
+        type: 'success',
+        text: 'Tu cuenta ha sido verificada correctamente. Ahora puedes iniciar sesión.'
+      });
+    } else if (alreadyVerified) {
+      // Mostrar mensaje de que la cuenta ya estaba verificada
+      setCustomMessage({
+        type: 'info',
+        text: 'Tu cuenta ya ha sido verificada anteriormente. Puedes iniciar sesión.'
+      });
+    } else if (verificationError) {
+      // Mostrar mensaje de error de verificación
+      setCustomMessage({
+        type: 'error',
+        text: verificationMessage || 'Hubo un problema al verificar tu cuenta. Por favor, intenta registrarte nuevamente.'
+      });
+    }
+  }, [isVerified, verificationError, verificationMessage, alreadyVerified]);
+  
   };
 
   const handleSubmit = async (e) => {
@@ -104,7 +135,8 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2 className="titulo">INICIAR SESIÓN</h2>
+
+        <h2 className="titulo">INICIAR SESIÓN 2</h2>
         <p className="auth-subtitle">ACCEDE A TU CUENTA DE FITNESS GYM</p>
         
         {error && !verificationNeeded && (
@@ -202,3 +234,4 @@ const Login = () => {
 };
 
 export default Login;
+
