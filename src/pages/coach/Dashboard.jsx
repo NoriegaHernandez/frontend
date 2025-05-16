@@ -1,3 +1,4 @@
+
 // client/src/pages/coach/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -19,14 +20,6 @@ const CoachDashboard = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [statsTimeframe, setStatsTimeframe] = useState('month');
   
-  // Estadísticas simuladas (pueden ser reemplazadas con datos reales)
-  const [coachStats, setCoachStats] = useState({
-    totalClients: 0,
-    activeClients: 0,
-    totalSessions: 0,
-    completedRoutines: 0
-  });
-
   // Función para refrescar datos
   const refreshData = () => {
     console.log('Forzando actualización de datos...');
@@ -47,12 +40,6 @@ const CoachDashboard = () => {
         // Verificar que los datos son correctos antes de asignarlos
         if (Array.isArray(clientsResponse.data)) {
           setClients(clientsResponse.data || []);
-          // Actualizar estadísticas basadas en clientes
-          setCoachStats(prev => ({
-            ...prev,
-            totalClients: clientsResponse.data.length,
-            activeClients: clientsResponse.data.filter(c => c.activo).length || 0
-          }));
         } else {
           console.error("Respuesta de clientes no es un array:", clientsResponse);
           setClients([]);
@@ -198,27 +185,6 @@ const CoachDashboard = () => {
       
       <div className="main-content">
         <div className="content-wrapper">
-          {/* Header con información del usuario y botón de actualizar */}
-          <div className="user-card">
-            <div className="user-avatar">
-              <img src="/src/assets/icons/usuario.png" alt="Avatar" width="50" height="50" />
-            </div>
-            <div className="user-info">
-              <div className="user-name">{user?.name || 'Entrenador'}</div>
-              <div className="membership-details">
-                <span>Entrenador Profesional</span>
-                <span>Panel de Control</span>
-              </div>
-            </div>
-            <button 
-              className="refresh-button" 
-              onClick={refreshData} 
-              title="Actualizar datos"
-            >
-              🔄 Actualizar
-            </button>
-          </div>
-          
           {/* Mensaje de error si existe */}
           {error && (
             <div className="error-message">
@@ -226,15 +192,35 @@ const CoachDashboard = () => {
               <button className="error-close" onClick={() => setError(null)}>×</button>
             </div>
           )}
-
-          {/* Spinner de carga */}
+          
           {loading ? (
             <div className="loading-container">
               <div className="spinner"></div>
-              <p>Cargando datos...</p>
+              <p>Cargando datos del dashboard...</p>
             </div>
           ) : (
             <>
+              {/* Header con información del usuario y botón de actualizar */}
+              <div className="user-card">
+                <div className="user-avatar">
+                  <img src="/src/assets/icons/usuario.png" alt="Avatar" width="50" height="50" />
+                </div>
+                <div className="user-info">
+                  <div className="user-name">{user?.name || 'Entrenador'}</div>
+                  <div className="membership-details">
+                    <span>Entrenador del Sistema</span>
+                    <span>Panel de Control</span>
+                  </div>
+                </div>
+                <button 
+                  className="refresh-button" 
+                  onClick={refreshData} 
+                  title="Actualizar datos"
+                >
+                  🔄 Actualizar
+                </button>
+              </div>
+              
               <h1 className="page-title">Dashboard de Entrenador</h1>
               
               <div className="dashboard-container">
@@ -268,122 +254,147 @@ const CoachDashboard = () => {
                   <div className="stat-card interactive">
                     <div className="stat-header">
                       <h3>Total Clientes</h3>
-                      <div className="trend-indicator">
-                        <span className="trend-arrow">↑</span>
+                      <div className="trend-indicator neutral">
+                        <span className="trend-arrow">→</span>
                         <span className="trend-percent">0%</span>
                       </div>
                     </div>
                     <p className="stat-value">{clients.length}</p>
                     <p className="stat-description">
                       <span className="stat-comparison">
-                        0 en el {statsTimeframe === 'week' ? 'período' : statsTimeframe === 'month' ? 'mes' : 'año'} anterior
+                        0 en el mes anterior
                       </span>
                       <br />
                       Clientes asignados actualmente
                     </p>
+                    <div className="stat-progress-bar">
+                      <div 
+                        className="progress-fill"
+                        style={{ 
+                          width: '100%'
+                        }}
+                      ></div>
+                    </div>
                   </div>
                   
                   <div className="stat-card interactive">
                     <div className="stat-header">
                       <h3>Clientes Activos</h3>
                       <div className="trend-indicator neutral">
-                        <span className="trend-arrow"></span>
+                        <span className="trend-arrow">→</span>
                         <span className="trend-percent">0%</span>
                       </div>
                     </div>
-                    <p className="stat-value">{coachStats.activeClients}</p>
+                    <p className="stat-value">{clients.filter(c => c.activo).length || 0}</p>
                     <p className="stat-description">
                       <span className="stat-comparison">
-                        0 en el {statsTimeframe === 'week' ? 'período' : statsTimeframe === 'month' ? 'mes' : 'año'} anterior
+                        0 en el mes anterior
                       </span>
                       <br />
-                      {clients.length > 0 ? Math.round((coachStats.activeClients / clients.length) * 100) : 0}% del total de clientes
+                      {clients.length > 0 ? Math.round((clients.filter(c => c.activo).length / clients.length) * 100) : 0}% del total de clientes
                     </p>
+                    <div className="stat-progress-bar">
+                      <div 
+                        className="progress-fill"
+                        style={{ 
+                          width: clients.length > 0 ? `${(clients.filter(c => c.activo).length / clients.length) * 100}%` : '0%'
+                        }}
+                      ></div>
+                    </div>
                   </div>
                   
                   <div className="stat-card interactive">
                     <div className="stat-header">
-                      <h3>Rutinas Asignadas</h3>
-                      <div className="trend-indicator">
-                        <span className="trend-arrow">↑</span>
+                      <h3>Entrenadores</h3>
+                      <div className="trend-indicator neutral">
+                        <span className="trend-arrow">→</span>
                         <span className="trend-percent">0%</span>
                       </div>
                     </div>
-                    <p className="stat-value">{coachStats.completedRoutines}</p>
+                    <p className="stat-value">1</p>
                     <p className="stat-description">
                       <span className="stat-comparison">
-                        0 en el {statsTimeframe === 'week' ? 'período' : statsTimeframe === 'month' ? 'mes' : 'año'} anterior
+                        0 en el mes anterior
                       </span>
                       <br />
-                      Rutinas asignadas a clientes
+                      Entrenadores en la plataforma
                     </p>
+                    <div className="stat-progress-bar">
+                      <div 
+                        className="progress-fill"
+                        style={{ 
+                          width: '100%'
+                        }}
+                      ></div>
+                    </div>
                   </div>
                   
                   <div className="stat-card interactive">
                     <div className="stat-header">
                       <h3>Solicitudes Pendientes</h3>
-                      <div className="trend-indicator">
-                        <span className="trend-arrow">↑</span>
+                      <div className="trend-indicator neutral">
+                        <span className="trend-arrow">→</span>
                         <span className="trend-percent">0%</span>
                       </div>
                     </div>
                     <p className="stat-value">{pendingRequests.length}</p>
                     <p className="stat-description">
                       <span className="stat-comparison">
-                        0 en el {statsTimeframe === 'week' ? 'período' : statsTimeframe === 'month' ? 'mes' : 'año'} anterior
+                        0 en el mes anterior
                       </span>
                       <br />
-                      Solicitudes esperando respuesta
+                      Solicitudes en espera de aprobación
                     </p>
+                    <div className="stat-progress-bar">
+                      <div 
+                        className="progress-fill"
+                        style={{ 
+                          width: pendingRequests.length > 0 ? '100%' : '0%'
+                        }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
                 
                 {/* Actividad Reciente y Acciones Rápidas */}
-                <div className="admin-row">
-                  {/* Actividad Reciente - Pestaña de clientes o solicitudes */}
-                  <div className="admin-card activity-card">
+                <div className="admin-cards-row">
+                  {/* Actividad Reciente - Lista de clientes o solicitudes */}
+                  <div className="admin-card">
                     <div className="card-header-with-actions">
-                      <h3>{activeTab === 'clients' ? "Mis Clientes" : "Solicitudes Pendientes"}</h3>
+                      <h3>Actividad Reciente</h3>
                       <div className="activity-filters">
-                        <button 
-                          className={`filter-button ${activeTab === 'clients' ? 'active' : ''}`}
-                          onClick={() => setActiveTab('clients')}
+                        <select 
+                          className="activity-filter-select"
+                          value={activeTab}
+                          onChange={(e) => setActiveTab(e.target.value)}
                         >
-                          Todos los clientes
-                        </button>
-                        <button 
-                          className={`filter-button ${activeTab === 'requests' ? 'active' : ''}`}
-                          onClick={() => setActiveTab('requests')}
-                        >
-                          Todo el tiempo
-                        </button>
+                          <option value="clients">Todos los clientes</option>
+                          <option value="requests">Solicitudes pendientes</option>
+                        </select>
                       </div>
                     </div>
                     
-                    {activeTab === 'clients' ? (
-                      clients.length === 0 ? (
-                        <div className="empty-activity">
-                          <p>No tienes clientes asignados actualmente.</p>
-                          <button 
-                            className="secondary-button" 
-                            onClick={refreshData}
-                            style={{ marginTop: '10px' }}
-                          >
-                            Verificar nuevamente
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="activity-list">
-                          {clients.map(client => (
+                    <div className="activity-list">
+                      {activeTab === 'clients' ? (
+                        clients.length === 0 ? (
+                          <div className="empty-activity">
+                            <p>No hay clientes asignados actualmente.</p>
+                            <p>Las asignaciones de clientes aparecerán automáticamente cuando un cliente solicite un entrenador.</p>
+                            <button 
+                              className="secondary-button" 
+                              onClick={refreshData}
+                              style={{ marginTop: '10px' }}
+                            >
+                              Verificar nuevamente
+                            </button>
+                          </div>
+                        ) : (
+                          clients.map(client => (
                             <div key={client.id_usuario} className="activity-item">
-                              <div className={`activity-icon client`}></div>
+                              <div className="activity-icon new_user"></div>
                               <div className="activity-details">
-                                <p className="activity-description">
-                                  <strong>{client.nombre}</strong> - {client.email}
-                                </p>
-                                <p className="activity-date">
-                                  Asignado desde: {new Date(client.fecha_asignacion).toLocaleDateString()}
-                                </p>
+                                <p className="activity-description">{client.nombre}</p>
+                                <p className="activity-date">Asignado desde: {new Date(client.fecha_asignacion).toLocaleDateString()}</p>
                               </div>
                               <button 
                                 className="view-details-button"
@@ -392,33 +403,28 @@ const CoachDashboard = () => {
                                 Ver detalles
                               </button>
                             </div>
-                          ))}
-                        </div>
-                      )
-                    ) : (
-                      pendingRequests.length === 0 ? (
-                        <div className="empty-activity">
-                          <p>No hay solicitudes pendientes en este momento.</p>
-                          <button 
-                            className="secondary-button" 
-                            onClick={refreshData}
-                            style={{ marginTop: '10px' }}
-                          >
-                            Verificar nuevamente
-                          </button>
-                        </div>
+                          ))
+                        )
                       ) : (
-                        <div className="activity-list">
-                          {pendingRequests.map(request => (
+                        pendingRequests.length === 0 ? (
+                          <div className="empty-activity">
+                            <p>No hay solicitudes pendientes en este momento.</p>
+                            <p>Las solicitudes aparecerán aquí cuando un cliente solicite tus servicios como entrenador.</p>
+                            <button 
+                              className="secondary-button" 
+                              onClick={refreshData}
+                              style={{ marginTop: '10px' }}
+                            >
+                              Verificar nuevamente
+                            </button>
+                          </div>
+                        ) : (
+                          pendingRequests.map(request => (
                             <div key={request.id_asignacion} className="activity-item">
-                              <div className={`activity-icon request`}></div>
+                              <div className="activity-icon subscription_renewal"></div>
                               <div className="activity-details">
-                                <p className="activity-description">
-                                  <strong>{request.nombre}</strong> - {request.email}
-                                </p>
-                                <p className="activity-date">
-                                  Fecha solicitud: {new Date(request.fecha_asignacion).toLocaleDateString()}
-                                </p>
+                                <p className="activity-description">{request.nombre} ha solicitado tus servicios</p>
+                                <p className="activity-date">Fecha solicitud: {new Date(request.fecha_asignacion).toLocaleDateString()}</p>
                               </div>
                               <div className="activity-actions">
                                 <button 
@@ -435,43 +441,35 @@ const CoachDashboard = () => {
                                 </button>
                               </div>
                             </div>
-                          ))}
-                        </div>
-                      )
-                    )}
+                          ))
+                        )
+                      )}
+                    </div>
                   </div>
                   
                   {/* Acciones Rápidas */}
-                  <div className="admin-card quick-actions-card">
+                  <div className="admin-card">
                     <h3>Acciones Rápidas</h3>
                     
                     <div className="quick-actions">
-                      <div className="quick-action-button" onClick={() => navigate('/coach/cliente/nuevo')}>
-                        <div className="quick-action-icon">
-                          <i className="user-icon">👤</i>
-                        </div>
-                        <span>Nuevo Cliente</span>
+                      <div className="quick-action-button" onClick={() => navigate('/coach/perfil')}>
+                        <div className="quick-action-icon user"></div>
+                        <span>Mi Perfil</span>
                       </div>
                       
-                      <div className="quick-action-button" onClick={() => navigate('/coach/rutinas/nueva')}>
-                        <div className="quick-action-icon">
-                          <i className="routine-icon">📋</i>
-                        </div>
+                      <div className="quick-action-button" onClick={() => navigate('/coach/rutinas/crear')}>
+                        <div className="quick-action-icon coach"></div>
                         <span>Crear Rutina</span>
                       </div>
                       
-                      <div className="quick-action-button" onClick={() => navigate('/coach/medidas')}>
-                        <div className="quick-action-icon">
-                          <i className="measurement-icon">📊</i>
-                        </div>
-                        <span>Registrar Medidas</span>
+                      <div className="quick-action-button" onClick={() => navigate('/coach/calendario')}>
+                        <div className="quick-action-icon subscription"></div>
+                        <span>Calendario</span>
                       </div>
                       
                       <div className="quick-action-button" onClick={() => navigate('/coach/solicitudes')}>
-                        <div className="quick-action-icon">
-                          <i className="request-icon">🔔</i>
-                        </div>
-                        <span>Ver Solicitudes ({pendingRequests.length})</span>
+                        <div className="quick-action-icon verify"></div>
+                        <span>Solicitudes Pendientes ({pendingRequests.length})</span>
                       </div>
                     </div>
                   </div>
