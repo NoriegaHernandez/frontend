@@ -1,4 +1,3 @@
-
 // client/src/pages/coach/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -190,6 +189,12 @@ const CoachDashboard = () => {
             <div className="error-message">
               {error}
               <button className="error-close" onClick={() => setError(null)}>×</button>
+            </div>
+          )}
+          
+          {notification && (
+            <div className={`notification ${notification.type}`}>
+              {notification.message}
             </div>
           )}
           
@@ -467,7 +472,8 @@ const CoachDashboard = () => {
                         <span>Calendario</span>
                       </div>
                       
-                      <div className="quick-action-button" onClick={() => navigate('/coach/solicitudes')}>
+                      {/* Modificado para cambiar la pestaña en lugar de navegar */}
+                      <div className="quick-action-button" onClick={() => setActiveTab('requests')}>
                         <div className="quick-action-icon verify"></div>
                         <span>Solicitudes Pendientes ({pendingRequests.length})</span>
                       </div>
