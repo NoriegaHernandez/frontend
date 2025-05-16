@@ -527,9 +527,25 @@ const CoachDashboard = () => {
                       {/* Botones de acción */}
                       <div className="modal-actions">
                         <button 
-                          className="coach-button primary"
-                          onClick={() => navigate(`/coach/rutina/${selectedClient.id_usuario}`)}
-                        >
+                         className="coach-button primary"
+                          onClick={() => {
+                         // Guarda el ID del cliente seleccionado en localStorage como respaldo
+                         if (selectedClient && selectedClient.id_usuario) {
+                         // Cerrar el modal primero
+                          handleCloseDetails();
+      
+                          // Luego navegar
+                          console.log("Navegando a: /coach/rutina/" + selectedClient.id_usuario);
+                          navigate(`/coach/rutina/${selectedClient.id_usuario}`);
+                          } else {
+                          console.error("Cliente no seleccionado o sin ID");
+                         setNotification({
+                          type: 'error',
+                          message: 'Error: No se pudo identificar al cliente'
+                         });
+                       }
+                     } }
+                   > 
                           Asignar rutina
                         </button>
                         <button className="coach-button secondary">
