@@ -24,15 +24,10 @@ import PerfilUsuario from './pages/cliente/Perfilusuario';
 import CoachDashboard from './pages/coach/Dashboard';
 import InformacionCoach from './pages/coach/InformacionCoach';
 import AsignarRutina from './pages/coach/AsignarRutina';
-import Rutinas from './pages/coach/Rutinas'; // Asumimos que este componente existe o se creará próximamente
+import Rutinas from './pages/coach/Rutinas';
 
 // Páginas de administrador
 import AdminDashboard from './pages/admin/Dashboard';
-
-// En tu archivo de rutas (posiblemente App.jsx o similar)
-import { Routes, Route } from 'react-router-dom';
-import CoachDashboard from './pages/coach/Dashboard';
-import AssignRoutine from './pages/coach/AssignRoutine';
 
 // Componente para redirigir según tipo de usuario
 const RedirectBasedOnRole = () => {
@@ -94,19 +89,6 @@ function App() {
         </Routes>
       </Router>
     </AuthProvider>
-  );
-}
-function App() {
-  return (
-    <Routes>
-      {/* Otras rutas... */}
-       <Route path="/coach" element={<CoachDashboard />} />
-       <Route path="/coach/rutina/:clientId" element={
-       <ProtectedRoute>
-       <AssignRoutine />
-       </ProtectedRoute>
-      } />
-    </Routes>
   );
 }
 
