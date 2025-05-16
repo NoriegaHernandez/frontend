@@ -1,16 +1,15 @@
-// client/src/pages/cliente/Informacion.jsx
+// client/src/pages/coach/InformacionCoach.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-import './Dashboard.css'; // Reutilizamos los estilos
-import './Informacion.css'; // Estilos específicos para información
+import './CoachStyles.css'; // Usando los mismos estilos que el Dashboard
 
-const Informacion = () => {
+const InformacionCoach = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   
-  const [userData, setUserData] = useState(null);
+  const [coachData, setCoachData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
@@ -21,17 +20,20 @@ const Informacion = () => {
     nombre: '',
     email: '',
     telefono: '',
-    direccion: '',
-    fecha_nacimiento: ''
+    especialidad: '',
+    certificaciones: '',
+    biografia: '',
+    horario_disponible: '',
+    experiencia: ''
   });
   // Estado para mensajes de éxito o error en la edición
   const [updateMessage, setUpdateMessage] = useState({ type: '', text: '' });
   // Estado para el proceso de guardado
   const [isSaving, setSaving] = useState(false);
   
-  // Cargar datos del usuario
+  // Cargar datos del entrenador
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchCoachData = async () => {
       try {
         setLoading(true);
         setError('');
@@ -44,55 +46,61 @@ const Informacion = () => {
           return;
         }
         
-        console.log('Intentando cargar datos del usuario...');
+        console.log('Intentando cargar datos del entrenador...');
         try {
-          const response = await api.getCurrentUser();
+          const response = await api.getCoachProfile();
           console.log('Respuesta del servidor:', response);
           
           if (response) {
-            setUserData(response);
+            setCoachData(response);
             setFormData({
               nombre: response.nombre || '',
               email: response.email || '',
               telefono: response.telefono || '',
-              direccion: response.direccion || '',
-              fecha_nacimiento: response.fecha_nacimiento ? response.fecha_nacimiento.split('T')[0] : ''
+              especialidad: response.especialidad || '',
+              certificaciones: response.certificaciones || '',
+              biografia: response.biografia || '',
+              horario_disponible: response.horario_disponible || '',
+              experiencia: response.experiencia || ''
             });
           } else {
-            throw new Error('No se recibieron datos del usuario');
+            throw new Error('No se recibieron datos del entrenador');
           }
         } catch (apiError) {
           console.error('Error en la API:', apiError);
           
           if (user) {
             const fallbackData = {
-              id_usuario: user.id,
-              nombre: user.name || user.nombre || 'Usuario',
+              id_coach: user.id,
+              nombre: user.name || user.nombre || 'Entrenador',
               email: user.email || '',
-              tipo_usuario: user.type || user.tipo_usuario || 'cliente',
+              tipo_usuario: 'entrenador',
               estado: user.estado || 'activo'
             };
-            setUserData(fallbackData);
+            setCoachData(fallbackData);
             setFormData({
               nombre: fallbackData.nombre || '',
               email: fallbackData.email || '',
               telefono: '',
-              direccion: '',
-              fecha_nacimiento: ''
+              especialidad: '',
+              certificaciones: '',
+              biografia: '',
+              horario_disponible: '',
+              experiencia: ''
             });
           } else {
-            throw new Error('No se pudieron obtener datos del usuario');
+            throw new Error('No se pudieron obtener datos del entrenador');
           }
         }
       } catch (error) {
-        console.error('Error al cargar datos del usuario:', error);
+        console.error('Error al cargar datos del entrenador:', error);
         setError('No se pudieron cargar los datos del perfil. Por favor, intente nuevamente.');
       } finally {
         setLoading(false);
       }
     };
     
-    fetchUserData();
+    fetchCoachData();
   }, [user]);
 
   const handleLogout = () => {
@@ -118,18 +126,21 @@ const Informacion = () => {
       setUpdateMessage({ type: '', text: '' });
       
       const updateData = {
-        id_usuario: userData.id_usuario,
+        id_coach: coachData.id_coach,
         nombre: formData.nombre,
         email: formData.email,
         telefono: formData.telefono || null,
-        direccion: formData.direccion || null,
-        fecha_nacimiento: formData.fecha_nacimiento || null
+        especialidad: formData.especialidad || null,
+        certificaciones: formData.certificaciones || null,
+        biografia: formData.biografia || null,
+        horario_disponible: formData.horario_disponible || null,
+        experiencia: formData.experiencia || null
       };
       
       console.log('Enviando datos actualizados:', updateData);
       
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/profile', {
+      const response = await fetch('http://localhost:5000/api/coaches/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -142,8 +153,8 @@ const Informacion = () => {
         const data = await response.json();
         console.log('Perfil actualizado correctamente:', data);
         
-        setUserData({
-          ...userData,
+        setCoachData({
+          ...coachData,
           ...updateData
         });
         
@@ -171,61 +182,53 @@ const Informacion = () => {
   const handleEdit = () => {
     setIsEditing(true);
     setUpdateMessage({ type: '', text: '' });
-    setFormData({
-      nombre: userData.nombre || '',
-      email: userData.email || '',
-      telefono: userData.telefono || '',
-      direccion: userData.direccion || '',
-      fecha_nacimiento: userData.fecha_nacimiento ? userData.fecha_nacimiento.split('T')[0] : ''
-    });
   };
 
   const handleCancel = () => {
     setIsEditing(false);
     setUpdateMessage({ type: '', text: '' });
     setFormData({
-      nombre: userData.nombre || '',
-      email: userData.email || '',
-      telefono: userData.telefono || '',
-      direccion: userData.direccion || '',
-      fecha_nacimiento: userData.fecha_nacimiento ? userData.fecha_nacimiento.split('T')[0] : ''
+      nombre: coachData.nombre || '',
+      email: coachData.email || '',
+      telefono: coachData.telefono || '',
+      especialidad: coachData.especialidad || '',
+      certificaciones: coachData.certificaciones || '',
+      biografia: coachData.biografia || '',
+      horario_disponible: coachData.horario_disponible || '',
+      experiencia: coachData.experiencia || ''
     });
   };
 
   return (
-    <div className="container">
-      <div className="sidebar">
-        <div className="logo">
+    <div className="coach-container">
+      <div className="coach-sidebar">
+        <div className="coach-logo">
           <div className="logo-circle">
-            <img src="/logo.png" alt="Logo Gimnasio" className='logo-img' />
+            <img src="/src/assets/icons/logo.png" alt="Logo Gimnasio" width="60" height="60" />
           </div>
         </div>
         
-        <div className="menu-buttons">
-          <button className="menu-button" onClick={() => navigate('/cliente/dashboard')}>Inicio</button>
-          <button className="menu-button active">Información</button>
-          <button className="menu-button" onClick={() => navigate('/cliente/membresia')}>Membresía</button>
-          <button className="menu-button" onClick={() => navigate('/cliente/entrenadores')}>Entrenadores</button>
-          <button className="menu-button" onClick={handleLogout}>Cerrar sesión</button>
-        </div>
+        <nav className="coach-nav">
+          <button className="coach-nav-button" onClick={() => navigate('/coach/dashboard')}>Dashboard</button>
+          <button className="coach-nav-button" onClick={() => navigate('/coach/rutinas')}>Rutinas</button>
+          <button className="coach-nav-button active">Mi Perfil</button>
+          <button className="coach-nav-button" onClick={handleLogout}>Cerrar sesión</button>
+        </nav>
       </div>
       
-      <div className="main-content">
-        <div className="user-card">
-          <div className="user-avatar">
-            <img src="/src/assets/icons/usuario.png" alt="Avatar" width="50" height="50" />
-          </div>
-          <div className="user-info">
-            <div className="user-name">{user?.name || 'Usuario'}</div>
-            <div className="membership-details">
-              <span>Cliente del gimnasio</span>
-              <span>Estado: Activo</span>
+      <div className="coach-content">
+        <div className="coach-header">
+          <h1>Mi Perfil de Entrenador</h1>
+          <div className="coach-profile">
+            <span>{user?.name || 'Entrenador'}</span>
+            <div className="coach-avatar">
+              <img src="/src/assets/icons/usuario.png" alt="Avatar" width="40" height="40" />
             </div>
           </div>
         </div>
         
         {error && (
-          <div className="error-message">
+          <div className="notification error">
             {error}
           </div>
         )}
@@ -233,69 +236,71 @@ const Informacion = () => {
         {loading ? (
           <div className="loading-container">
             <div className="spinner"></div>
-            <p>Cargando información del usuario...</p>
+            <p>Cargando información del entrenador...</p>
           </div>
         ) : (
-          <div className="profile-container">
+          <div className="coach-section">
             <h2>Mi Perfil</h2>
             
             {updateMessage.text && (
-              <div className={`update-message ${updateMessage.type}`}>
+              <div className={`notification ${updateMessage.type}`}>
                 {updateMessage.text}
               </div>
             )}
             
             {!isEditing ? (
               <div className="profile-card">
-                <div className="profile-header">
+                <div className="coach-card-header">
                   <h3>Información Personal</h3>
-                  <button className="edit-button" onClick={handleEdit}>
+                  <button className="coach-button secondary" onClick={handleEdit}>
                     <span className="edit-icon">✏️</span> Editar
                   </button>
                 </div>
                 
                 <div className="profile-avatar">
                   <div className="avatar-placeholder">
-                    {userData.nombre ? userData.nombre.charAt(0).toUpperCase() : 'U'}
+                    {coachData.nombre ? coachData.nombre.charAt(0).toUpperCase() : 'E'}
                   </div>
                 </div>
                 
                 <div className="profile-info">
-                  <h3>{userData.nombre || 'Usuario'}</h3>
-                  <p className="email">{userData.email || ''}</p>
+                  <h3>{coachData.nombre || 'Entrenador'}</h3>
+                  <p className="email">{coachData.email || ''}</p>
                   
                   <div className="info-grid">
                     <div className="info-item">
                       <span className="label">Teléfono:</span>
-                      <span className="value">{userData.telefono || 'No especificado'}</span>
+                      <span className="value">{coachData.telefono || 'No especificado'}</span>
                     </div>
                     
                     <div className="info-item">
-                      <span className="label">Dirección:</span>
-                      <span className="value">{userData.direccion || 'No especificada'}</span>
+                      <span className="label">Especialidad:</span>
+                      <span className="value">{coachData.especialidad || 'No especificada'}</span>
                     </div>
                     
                     <div className="info-item">
-                      <span className="label">Fecha de Nacimiento:</span>
-                      <span className="value">
-                        {userData.fecha_nacimiento 
-                          ? new Date(userData.fecha_nacimiento).toLocaleDateString() 
-                          : 'No especificada'}
-                      </span>
+                      <span className="label">Certificaciones:</span>
+                      <span className="value">{coachData.certificaciones || 'No especificadas'}</span>
                     </div>
                     
                     <div className="info-item">
-                      <span className="label">Fecha de Registro:</span>
-                      <span className="value">
-                        {userData.fecha_registro 
-                          ? new Date(userData.fecha_registro).toLocaleDateString() 
-                          : 'No disponible'}
-                      </span>
+                      <span className="label">Años de experiencia:</span>
+                      <span className="value">{coachData.experiencia || 'No especificado'}</span>
+                    </div>
+                    
+                    <div className="info-item coach-biography">
+                      <span className="label">Biografía:</span>
+                      <span className="value">{coachData.biografia || 'No has agregado tu biografía todavía.'}</span>
+                    </div>
+                    
+                    <div className="info-item">
+                      <span className="label">Horario disponible:</span>
+                      <span className="value">{coachData.horario_disponible || 'No especificado'}</span>
                     </div>
                     
                     <div className="info-item">
                       <span className="label">Tipo de Usuario:</span>
-                      <span className="value">Cliente</span>
+                      <span className="value">Entrenador</span>
                     </div>
                     
                     <div className="info-item">
@@ -307,7 +312,7 @@ const Informacion = () => {
               </div>
             ) : (
               <div className="profile-card edit-mode">
-                <div className="profile-header">
+                <div className="coach-card-header">
                   <h3>Editar Información Personal</h3>
                 </div>
                 
@@ -350,32 +355,69 @@ const Informacion = () => {
                     </div>
                     
                     <div className="form-group">
-                      <label htmlFor="direccion">Dirección:</label>
+                      <label htmlFor="especialidad">Especialidad:</label>
                       <input
                         type="text"
-                        id="direccion"
-                        name="direccion"
-                        value={formData.direccion}
+                        id="especialidad"
+                        name="especialidad"
+                        value={formData.especialidad}
                         onChange={handleChange}
-                        placeholder="Calle, número, colonia, ciudad"
+                        placeholder="Ej: Entrenamiento funcional, Fuerza, etc."
                       />
                     </div>
                     
                     <div className="form-group">
-                      <label htmlFor="fecha_nacimiento">Fecha de Nacimiento:</label>
+                      <label htmlFor="certificaciones">Certificaciones:</label>
                       <input
-                        type="date"
-                        id="fecha_nacimiento"
-                        name="fecha_nacimiento"
-                        value={formData.fecha_nacimiento}
+                        type="text"
+                        id="certificaciones"
+                        name="certificaciones"
+                        value={formData.certificaciones}
                         onChange={handleChange}
+                        placeholder="Ej: ACE, NASM, etc."
+                      />
+                    </div>
+                    
+                    <div className="form-group">
+                      <label htmlFor="experiencia">Años de experiencia:</label>
+                      <input
+                        type="text"
+                        id="experiencia"
+                        name="experiencia"
+                        value={formData.experiencia}
+                        onChange={handleChange}
+                        placeholder="Ej: 5 años"
+                      />
+                    </div>
+                    
+                    <div className="form-group full-width">
+                      <label htmlFor="horario_disponible">Horario disponible:</label>
+                      <input
+                        type="text"
+                        id="horario_disponible"
+                        name="horario_disponible"
+                        value={formData.horario_disponible}
+                        onChange={handleChange}
+                        placeholder="Ej: Lunes a Viernes de 9:00 a 17:00"
+                      />
+                    </div>
+                    
+                    <div className="form-group full-width">
+                      <label htmlFor="biografia">Biografía:</label>
+                      <textarea
+                        id="biografia"
+                        name="biografia"
+                        value={formData.biografia}
+                        onChange={handleChange}
+                        rows="5"
+                        placeholder="Escribe una breve descripción sobre ti, tu enfoque de entrenamiento y tu experiencia..."
                       />
                     </div>
                     
                     <div className="form-buttons">
                       <button 
                         type="button" 
-                        className="cancel-button" 
+                        className="coach-button secondary" 
                         onClick={handleCancel}
                         disabled={isSaving}
                       >
@@ -383,7 +425,7 @@ const Informacion = () => {
                       </button>
                       <button 
                         type="submit" 
-                        className="save-button"
+                        className="coach-button primary"
                         disabled={isSaving}
                       >
                         {isSaving ? 'Guardando...' : 'Guardar Cambios'}
@@ -393,18 +435,6 @@ const Informacion = () => {
                 </div>
               </div>
             )}
-            
-            <div className="information-section">
-              <h3>Información adicional</h3>
-              <p>Mantenemos tu información segura y protegida. Si necesitas actualizar algún dato adicional o tienes preguntas sobre tu cuenta, no dudes en contactarnos.</p>
-              
-              <div className="contact-info">
-                <h4>¿Necesitas ayuda?</h4>
-                <p>Puedes contactarnos en: <strong>(123) 456-7890</strong></p>
-                <p>Email: <strong>soporte@fitnessgym.com</strong></p>
-                <p>Horario de atención: Lunes a Viernes de 7:00 AM a 10:00 PM</p>
-              </div>
-            </div>
           </div>
         )}
       </div>
@@ -412,4 +442,4 @@ const Informacion = () => {
   );
 };
 
-export default Informacion;
+export default InformacionCoach;

@@ -1078,7 +1078,76 @@ cancelClientMembership: async (id_suscripcion) => {
     throw error;
   }
 },
+requestCoach: async (coachId) => {
+  try {
+    console.log(`Enviando solicitud para el entrenador ID: ${coachId}`);
+    
+    // Verificar que se está enviando un ID válido
+    if (!coachId) {
+      throw new Error('ID de entrenador no válido');
+    }
+    
+    const response = await axiosInstance.post(`/client/request-coach/${coachId}`);
+    console.log('Respuesta de solicitud exitosa:', response.data);
+    return response;
+  } catch (error) {
+    console.error('Error al solicitar entrenador:', error);
+    
+    // Detallar el error para ayudar a depurar
+    if (error.response) {
+      console.error('Datos de error del servidor:', error.response.data);
+      console.error('Estado HTTP:', error.response.status);
+      
+      if (error.response.status === 500) {
+        throw new Error('Ha ocurrido un problema en el servidor. El equipo técnico ha sido notificado. Por favor, intenta más tarde.');
+      } else if (error.response.status === 404) {
+        throw new Error('La funcionalidad para solicitar entrenador no está disponible en este momento.');
+      } else if (error.response.status === 409) {
+        throw new Error('Ya existe una solicitud pendiente o tienes un entrenador asignado.');
+      } else {
+        throw new Error(error.response.data?.message || 'Error al procesar tu solicitud. Por favor, inténtalo de nuevo.');
+      }
+    } else if (error.request) {
+      throw new Error('No se pudo conectar con el servidor. Verifica tu conexión a internet.');
+    } else {
+      throw new Error('Error en la aplicación. Por favor contacta al administrador.');
+    }
+  }
+},
+// Añade estas funciones al objeto api en api.js
 
+// Obtener información de un cliente específico
+getClientById: async (clientId) => {
+  try {
+    const response = await axiosInstance.get(`/coach/clients/${clientId}`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener información del cliente:', error);
+    throw error;
+  }
+},
+
+// Obtener rutinas de un cliente
+getClientRoutines: async (clientId) => {
+  try {
+    const response = await axiosInstance.get(`/coach/clients/${clientId}/routines`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener rutinas del cliente:', error);
+    throw error;
+  }
+},
+
+// Guardar rutina de un cliente
+saveClientRoutine: async (clientId, routineData) => {
+  try {
+    const response = await axiosInstance.post(`/coach/clients/${clientId}/routines`, routineData);
+    return response;
+  } catch (error) {
+    console.error('Error al guardar rutina del cliente:', error);
+    throw error;
+  }
+},
 // Esta función es opcional, sólo si necesitas ver el historial
 getClientMembershipHistory: async () => {
   try {

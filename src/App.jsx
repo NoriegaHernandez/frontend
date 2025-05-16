@@ -1,4 +1,3 @@
-
 // client/src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -21,8 +20,13 @@ import Membresia from './pages/cliente/Membresia';
 import Entrenadores from './pages/cliente/Entrenadores';
 import PerfilUsuario from './pages/cliente/Perfilusuario';
 
-// Otras páginas
+// Páginas de entrenador (coach)
 import CoachDashboard from './pages/coach/Dashboard';
+import InformacionCoach from './pages/coach/InformacionCoach';
+import AsignarRutina from './pages/coach/AsignarRutina';
+import Rutinas from './pages/coach/Rutinas'; // Asumimos que este componente existe o se creará próximamente
+
+// Páginas de administrador
 import AdminDashboard from './pages/admin/Dashboard';
 
 // Componente para redirigir según tipo de usuario
@@ -60,20 +64,21 @@ function App() {
             <Route path="/cliente/informacion" element={<Informacion />} />
             <Route path="/cliente/membresia" element={<Membresia />} />
             <Route path="/cliente/entrenadores" element={<Entrenadores />} />
-            <Route path="/cliente/perfil" element={<PerfilUsuario />} /> {}
-            
+            <Route path="/cliente/perfil" element={<PerfilUsuario />} />
           </Route>
           
-          {/* Rutas protegidas para coaches */}
+          {/* Rutas protegidas para entrenadores (coaches) */}
           <Route element={<ProtectedRoute allowedRoles={['coach']} />}>
             <Route path="/coach/dashboard" element={<CoachDashboard />} />
-            {}
+            <Route path="/coach/perfil" element={<InformacionCoach />} />
+            <Route path="/coach/rutinas" element={<Rutinas />} />
+            <Route path="/coach/rutina/:id" element={<AsignarRutina />} />
           </Route>
           
           {/* Rutas protegidas para administradores */}
           <Route element={<ProtectedRoute allowedRoles={['administrador']} />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            {}
+            {/* Otras rutas de administrador se agregarán aquí */}
           </Route>
           
           {/* Ruta por defecto para redirigir según tipo de usuario */}

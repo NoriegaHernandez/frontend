@@ -1,4 +1,3 @@
-
 // client/src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import api from '../services/api';
@@ -62,7 +61,7 @@ export const AuthProvider = ({ children }) => {
       // Guardar token y datos del usuario
       localStorage.setItem('token', response.token);
       localStorage.setItem('userId', response.user.id);
-      localStorage.setItem('userType', response.user.type);
+      localStorage.setItem('userType', response.user.tipo_usuario || response.user.type);
       
       // Actualizar estado
       setUser(response.user);
@@ -106,7 +105,7 @@ export const AuthProvider = ({ children }) => {
         // Si no se requiere verificación, proceder como antes
         localStorage.setItem('token', response.token);
         localStorage.setItem('userId', response.user.id);
-        localStorage.setItem('userType', response.user.type);
+        localStorage.setItem('userType', response.user.tipo_usuario || response.user.type);
         
         // Actualizar estado
         setUser(response.user);
@@ -152,17 +151,17 @@ export const AuthProvider = ({ children }) => {
   };
   
   // Proporcionar valores del contexto
-const value = {
-  user,
-  setUser,  
-  loading,
-  error,
-  login,
-  register,
-  logout,
-  resendVerification,
-  isAuthenticated: !!user
-};
+  const value = {
+    user,
+    setUser,  
+    loading,
+    error,
+    login,
+    register,
+    logout,
+    resendVerification,
+    isAuthenticated: !!user
+  };
   
   return (
     <AuthContext.Provider value={value}>
