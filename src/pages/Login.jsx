@@ -1,13 +1,10 @@
-
-
 // client/src/pages/Login.jsx
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';  // Añadí useEffect aquí
+import { Link, useNavigate, useLocation } from 'react-router-dom';  // Moví useLocation aquí
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import '../styles/Auth.css';
 import '../styles/LoginFix.css';
-import { useLocation } from 'react-router-dom';
 
 const renderIcon = (iconType) => {
   try {
@@ -18,7 +15,6 @@ const renderIcon = (iconType) => {
     
     return <img className="icon" src={iconPaths[iconType]} alt={iconType} />;
   } catch (e) {
-
     switch(iconType) {
       case 'usuario': return <span className="icon emoji-icon">👤</span>;
       case 'contraseña': return <span className="icon emoji-icon">🔒</span>;
@@ -38,8 +34,10 @@ const Login = () => {
   const [verificationEmail, setVerificationEmail] = useState('');
   const [resendLoading, setResendLoading] = useState(false);
   const [resendMessage, setResendMessage] = useState(null);
+  const [customMessage, setCustomMessage] = useState(null);  // Añadí este estado
   const { login, loading, error } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();  // Moví esto aquí
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,14 +45,16 @@ const Login = () => {
       ...formData,
       [name]: value
     });
-      const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const isVerified = queryParams.get('verified') === 'true';
-  const verificationError = queryParams.get('verificationError') === 'true';
-  const verificationMessage = queryParams.get('message');
-  const alreadyVerified = queryParams.get('alreadyVerified') === 'true';
-    // Usar useEffect para manejar los parámetros de URL al cargar
+  };
+
+  // Moví esta lógica fuera de handleChange
   useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const isVerified = queryParams.get('verified') === 'true';
+    const verificationError = queryParams.get('verificationError') === 'true';
+    const verificationMessage = queryParams.get('message');
+    const alreadyVerified = queryParams.get('alreadyVerified') === 'true';
+    
     if (isVerified) {
       // Mostrar mensaje de verificación exitosa
       setCustomMessage({
@@ -74,9 +74,7 @@ const Login = () => {
         text: verificationMessage || 'Hubo un problema al verificar tu cuenta. Por favor, intenta registrarte nuevamente.'
       });
     }
-  }, [isVerified, verificationError, verificationMessage, alreadyVerified]);
-  
-  };
+  }, [location.search]); // Cambié las dependencias para usar location.search directamente
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -135,9 +133,14 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-
         <h2 className="titulo">INICIAR SESIÓN</h2>
         <p className="auth-subtitle">ACCEDE A TU CUENTA DE FITNESS GYM</p>
+        
+        {customMessage && (
+          <div className={`auth-message ${customMessage.type}`}>
+            {customMessage.text}
+          </div>
+        )}
         
         {error && !verificationNeeded && (
           <div className="auth-error">
@@ -167,7 +170,8 @@ const Login = () => {
             </button>
             
             <p>
-              <a href="#" onClick={() => {
+              <a href="#" onClick={(e) => {
+                e.preventDefault(); // Añadí esto para evitar el comportamiento predeterminado del enlace
                 setVerificationNeeded(false);
                 setResendMessage(null);
               }}>
@@ -222,7 +226,7 @@ const Login = () => {
         
         <div className="auth-links">
           <p>
-            ¿No tienes una cuenta? <Link to="/register">Regístrate aquí</Link>
+            ¿No tienes una cuenta? <Link to="/registro">Regístrate aquí</Link>
           </p>
           <p>
             ¿Olvidaste tu contraseña? <Link to="/recuperar-password">Recuperar contraseña</Link>
@@ -234,4 +238,3 @@ const Login = () => {
 };
 
 export default Login;
-
