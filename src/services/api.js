@@ -1178,6 +1178,41 @@ const verifyEmailDirect = async (token) => {
   window.location.href = `${apiUrl}/api/auth/verify-email-direct/${token}`;
 };
 
+// Agregar estas funciones al objeto api en client/src/services/api.js
+
+// Obtener todos los ejercicios disponibles
+getExercises: async () => {
+  try {
+    const response = await axiosInstance.get('/coach/exercises');
+    return response;
+  } catch (error) {
+    console.error('Error al obtener ejercicios:', error);
+    throw error;
+  }
+};
+
+// Obtener un ejercicio específico
+getExerciseById: async (exerciseId) => {
+  try {
+    const response = await axiosInstance.get(`/coach/exercises/${exerciseId}`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener ejercicio:', error);
+    throw error;
+  }
+};
+
+// Crear un nuevo ejercicio
+createExercise: async (exerciseData) => {
+  try {
+    const response = await axiosInstance.post('/coach/exercises', exerciseData);
+    return response;
+  } catch (error) {
+    console.error('Error al crear ejercicio:', error);
+    throw error;
+  }
+};
+
 // Exportarlos
 export { verifyEmail, verifyEmailDirect };
 export default api;
