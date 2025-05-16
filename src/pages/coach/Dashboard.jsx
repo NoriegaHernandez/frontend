@@ -361,123 +361,92 @@ const CoachDashboard = () => {
                   </div>
                 </div>
                 
-                {/* Actividad Reciente y Acciones Rápidas */}
-                <div className="admin-cards-row">
-                  {/* Actividad Reciente - Lista de clientes o solicitudes */}
-                  <div className="admin-card">
-                    <div className="card-header-with-actions">
-                      <h3>Actividad Reciente</h3>
-                      <div className="activity-filters">
-                        <select 
-                          className="activity-filter-select"
-                          value={activeTab}
-                          onChange={(e) => setActiveTab(e.target.value)}
-                        >
-                          <option value="clients">Todos los clientes</option>
-                          <option value="requests">Solicitudes pendientes</option>
-                        </select>
-                      </div>
-                    </div>
-                    
-                    <div className="activity-list">
-                      {activeTab === 'clients' ? (
-                        clients.length === 0 ? (
-                          <div className="empty-activity">
-                            <p>No hay clientes asignados actualmente.</p>
-                            <p>Las asignaciones de clientes aparecerán automáticamente cuando un cliente solicite un entrenador.</p>
-                            <button 
-                              className="secondary-button" 
-                              onClick={refreshData}
-                              style={{ marginTop: '10px' }}
-                            >
-                              Verificar nuevamente
-                            </button>
-                          </div>
-                        ) : (
-                          clients.map(client => (
-                            <div key={client.id_usuario} className="activity-item">
-                              <div className="activity-icon new_user"></div>
-                              <div className="activity-details">
-                                <p className="activity-description">{client.nombre}</p>
-                                <p className="activity-date">Asignado desde: {new Date(client.fecha_asignacion).toLocaleDateString()}</p>
-                              </div>
-                              <button 
-                                className="view-details-button"
-                                onClick={() => handleViewDetails(client)}
-                              >
-                                Ver detalles
-                              </button>
-                            </div>
-                          ))
-                        )
-                      ) : (
-                        pendingRequests.length === 0 ? (
-                          <div className="empty-activity">
-                            <p>No hay solicitudes pendientes en este momento.</p>
-                            <p>Las solicitudes aparecerán aquí cuando un cliente solicite tus servicios como entrenador.</p>
-                            <button 
-                              className="secondary-button" 
-                              onClick={refreshData}
-                              style={{ marginTop: '10px' }}
-                            >
-                              Verificar nuevamente
-                            </button>
-                          </div>
-                        ) : (
-                          pendingRequests.map(request => (
-                            <div key={request.id_asignacion} className="activity-item">
-                              <div className="activity-icon subscription_renewal"></div>
-                              <div className="activity-details">
-                                <p className="activity-description">{request.nombre} ha solicitado tus servicios</p>
-                                <p className="activity-date">Fecha solicitud: {new Date(request.fecha_asignacion).toLocaleDateString()}</p>
-                              </div>
-                              <div className="activity-actions">
-                                <button 
-                                  className="action-button accept"
-                                  onClick={() => handleAcceptRequest(request.id_asignacion)}
-                                >
-                                  Aceptar
-                                </button>
-                                <button 
-                                  className="action-button reject"
-                                  onClick={() => handleRejectRequest(request.id_asignacion)}
-                                >
-                                  Rechazar
-                                </button>
-                              </div>
-                            </div>
-                          ))
-                        )
-                      )}
+                {/* Panel único de Actividad Reciente - SIN la sección de Acciones Rápidas */}
+                <div className="admin-card" style={{ marginTop: '30px' }}>
+                  <div className="card-header-with-actions">
+                    <h3>Actividad Reciente</h3>
+                    <div className="activity-filters">
+                      <select 
+                        className="activity-filter-select"
+                        value={activeTab}
+                        onChange={(e) => setActiveTab(e.target.value)}
+                      >
+                        <option value="clients">Todos los clientes</option>
+                        <option value="requests">Solicitudes pendientes</option>
+                      </select>
                     </div>
                   </div>
                   
-                  {/* Acciones Rápidas */}
-                  <div className="admin-card">
-                    <h3>Acciones Rápidas</h3>
-                    
-                    <div className="quick-actions">
-                      <div className="quick-action-button" onClick={() => navigate('/coach/perfil')}>
-                        <div className="quick-action-icon user"></div>
-                        <span>Mi Perfil</span>
-                      </div>
-                      
-                      <div className="quick-action-button" onClick={() => navigate('/coach/rutinas/crear')}>
-                        <div className="quick-action-icon coach"></div>
-                        <span>Crear Rutina</span>
-                      </div>
-                      
-                      <div className="quick-action-button" onClick={() => navigate('/coach/calendario')}>
-                        <div className="quick-action-icon subscription"></div>
-                        <span>Calendario</span>
-                      </div>
-                      
-                      {/* Modificado para cambiar la pestaña en lugar de navegar */}
-                      <div className="quick-action-button" onClick={() => setActiveTab('requests')}>
-                        <div className="quick-action-icon verify"></div>
-                        <span>Solicitudes Pendientes ({pendingRequests.length})</span>
-                      </div>
-                    </div>
+                  <div className="activity-list">
+                    {activeTab === 'clients' ? (
+                      clients.length === 0 ? (
+                        <div className="empty-activity">
+                          <p>No hay clientes asignados actualmente.</p>
+                          <p>Las asignaciones de clientes aparecerán automáticamente cuando un cliente solicite un entrenador.</p>
+                          <button 
+                            className="secondary-button" 
+                            onClick={refreshData}
+                            style={{ marginTop: '10px' }}
+                          >
+                            Verificar nuevamente
+                          </button>
+                        </div>
+                      ) : (
+                        clients.map(client => (
+                          <div key={client.id_usuario} className="activity-item">
+                            <div className="activity-icon new_user"></div>
+                            <div className="activity-details">
+                              <p className="activity-description">{client.nombre}</p>
+                              <p className="activity-date">Asignado desde: {new Date(client.fecha_asignacion).toLocaleDateString()}</p>
+                            </div>
+                            <button 
+                              className="view-details-button"
+                              onClick={() => handleViewDetails(client)}
+                            >
+                              Ver detalles
+                            </button>
+                          </div>
+                        ))
+                      )
+                    ) : (
+                      pendingRequests.length === 0 ? (
+                        <div className="empty-activity">
+                          <p>No hay solicitudes pendientes en este momento.</p>
+                          <p>Las solicitudes aparecerán aquí cuando un cliente solicite tus servicios como entrenador.</p>
+                          <button 
+                            className="secondary-button" 
+                            onClick={refreshData}
+                            style={{ marginTop: '10px' }}
+                          >
+                            Verificar nuevamente
+                          </button>
+                        </div>
+                      ) : (
+                        pendingRequests.map(request => (
+                          <div key={request.id_asignacion} className="activity-item">
+                            <div className="activity-icon subscription_renewal"></div>
+                            <div className="activity-details">
+                              <p className="activity-description">{request.nombre} ha solicitado tus servicios</p>
+                              <p className="activity-date">Fecha solicitud: {new Date(request.fecha_asignacion).toLocaleDateString()}</p>
+                            </div>
+                            <div className="activity-actions">
+                              <button 
+                                className="action-button accept"
+                                onClick={() => handleAcceptRequest(request.id_asignacion)}
+                              >
+                                Aceptar
+                              </button>
+                              <button 
+                                className="action-button reject"
+                                onClick={() => handleRejectRequest(request.id_asignacion)}
+                              >
+                                Rechazar
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )
+                    )}
                   </div>
                 </div>
               </div>
