@@ -13,9 +13,17 @@ const CoachDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('clients');
   const [notification, setNotification] = useState(null);
-  // Nuevos estados para el modal de detalles
+  // Estados para el modal de detalles
   const [selectedClient, setSelectedClient] = useState(null);
   const [showClientDetails, setShowClientDetails] = useState(false);
+  // Estado para forzar actualización de datos
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Función para refrescar datos
+  const refreshData = () => {
+    console.log('Forzando actualización de datos...');
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +32,7 @@ const CoachDashboard = () => {
         
         // Obtener clientes asignados
         const clientsResponse = await api.getCoachClients();
-        console.log("Clientes obtenidos:", clientsResponse.data); // Para depurar
+        console.log("Clientes obtenidos:", clientsResponse.data);
         
         // Verificar que los datos son correctos antes de asignarlos
         if (Array.isArray(clientsResponse.data)) {
@@ -46,7 +54,7 @@ const CoachDashboard = () => {
     };
     
     fetchData();
-  }, []);
+  }, [refreshTrigger]);
 
   // Función para aceptar solicitud de cliente
   const handleAcceptRequest = async (requestId) => {
@@ -129,9 +137,9 @@ const CoachDashboard = () => {
     }
   };
 
-  // Nueva función para mostrar detalles del cliente
+  // Función para mostrar detalles del cliente
   const handleViewDetails = (client) => {
-    console.log("Cliente seleccionado:", client); // Para debuggear
+    console.log("Cliente seleccionado:", client);
     if (!client) {
       console.error("Cliente es null o undefined");
       return;
@@ -144,29 +152,27 @@ const CoachDashboard = () => {
 
   // Función para cerrar el modal de detalles
   const handleCloseDetails = () => {
-    console.log("Cerrando modal"); // Para debuggear
+    console.log("Cerrando modal");
     setShowClientDetails(false);
-    setSelectedClient(null); // También limpiar el cliente seleccionado
+    setSelectedClient(null);
   };
 
   return (
-    <div className="coach-container">
-      <div className="coach-sidebar">
-        <div className="coach-logo">
-          <div className="logo-circle">
-            <img src="/src/assets/icons/logo.png" alt="Logo Gimnasio" width="60" height="60" />
-          </div>
+    <div className="admin-container">
+      <div className="admin-sidebar">
+        <div className="admin-logo">
+          <h2>FitnessGym</h2>
         </div>
         
-        <nav className="coach-nav">
-          <button className="coach-nav-button active">Dashboard</button>
-          <button className="coach-nav-button" onClick={() => navigate('/coach/rutinas')}>Rutinas</button>
-          <button className="coach-nav-button" onClick={() => navigate('/coach/perfil')}>Mi Perfil</button>
-          <button className="coach-nav-button" onClick={logout}>Cerrar sesión</button>
-        </nav>
+        <div className="admin-nav">
+          <button className="admin-nav-button active">Dashboard</button>
+          <button className="admin-nav-button" onClick={() => navigate('/coach/rutinas')}>Rutinas</button>
+          <button className="admin-nav-button" onClick={() => navigate('/coach/perfil')}>Mi Perfil</button>
+          <button className="admin-nav-button" onClick={logout}>Cerrar sesión</button>
+        </div>
       </div>
       
-      <div className="coach-content">
+      <div className="admin-content">
         {notification && (
           <div className={`notification ${notification.type}`}>
             {notification.message}
@@ -263,140 +269,277 @@ const CoachDashboard = () => {
           </div>
         )}
         
-        <div className="coach-header">
-          <h1>Dashboard de Entrenador</h1>
-          <div className="coach-profile">
-            <span>{user?.name || 'Entrenador'}</span>
-            <div className="coach-avatar">
-              <img src="/src/assets/icons/usuario.png" alt="Avatar" width="40" height="40" />
+        <div className="content-wrapper">
+          {loading && (
+            <div className="loading-container">
+              <div className="spinner"></div>
+              <p>Cargando datos...</p>
+            </div>
+          )}
+
+          <div className="user-card">
+            <div className="user-avatar">
+              <img src="/src/assets/icons/usuario.png" alt="Avatar" width="50" height="50" />
+            </div>
+            <div className="user-info">
+              <div className="user-name">{user?.name || 'Entrenador'}</div>
+              <div className="membership-details">
+                <span>Entrenador Profesional</span>
+                <span>Panel de Control</span>
+              </div>
+            </div>
+            <button 
+              className="refresh-button" 
+              onClick={refreshData} 
+              title="Actualizar datos"
+            >
+              🔄 Actualizar
+            </button>
+          </div>
+          
+          <h1 className="page-title">Dashboard de Entrenador</h1>
+          
+          <div className="dashboard-container">
+            {/* Estadísticas del entrenador */}
+            <div className="stats-grid">
+              <div className="stat-card">
+                <div className="stat-header">
+                  <h3>Total Clientes</h3>
+                </div>
+                <p className="stat-value">{clients.length}</p>
+                <p className="stat-description">
+                  Clientes asignados actualmente
+                </p>
+                <div className="stat-progress-bar">
+                  <div 
+                    className="progress-fill"
+                    style={{ 
+                      width: '100%'
+                    }}
+                  ></div>
+                </div>
+              </div>
+              
+              <div className="stat-card">
+                <div className="stat-header">
+                  <h3>Solicitudes Pendientes</h3>
+                </div>
+                <p className="stat-value">{pendingRequests.length}</p>
+                <p className="stat-description">
+                  Solicitudes esperando respuesta
+                </p>
+                <div className="stat-progress-bar">
+                  <div 
+                    className="progress-fill"
+                    style={{ 
+                      width: `${pendingRequests.length > 0 ? 100 : 0}%`
+                    }}
+                  ></div>
+                </div>
+              </div>
+              
+              <div className="stat-card">
+                <div className="stat-header">
+                  <h3>Rutinas Activas</h3>
+                </div>
+                <p className="stat-value">0</p>
+                <p className="stat-description">
+                  Rutinas asignadas a clientes
+                </p>
+                <div className="stat-progress-bar">
+                  <div 
+                    className="progress-fill"
+                    style={{ 
+                      width: '0%' 
+                    }}
+                  ></div>
+                </div>
+              </div>
+              
+              <div className="stat-card">
+                <div className="stat-header">
+                  <h3>Sesiones Completadas</h3>
+                </div>
+                <p className="stat-value">0</p>
+                <p className="stat-description">
+                  Total de sesiones de entrenamiento
+                </p>
+                <div className="stat-progress-bar">
+                  <div 
+                    className="progress-fill"
+                    style={{ 
+                      width: '0%'
+                    }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Pestañas de navegación */}
+            <div className="stats-timeframe-selector">
+              <div className="coach-tabs">
+                <button 
+                  className={`coach-tab ${activeTab === 'clients' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('clients')}
+                >
+                  Mis Clientes ({clients.length})
+                </button>
+                <button 
+                  className={`coach-tab ${activeTab === 'requests' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('requests')}
+                >
+                  Solicitudes Pendientes 
+                  {pendingRequests.length > 0 && (
+                    <span className="notification-badge">{pendingRequests.length}</span>
+                  )}
+                </button>
+              </div>
+            </div>
+            
+            {/* Contenido basado en la pestaña activa */}
+            <div className="admin-cards-row">
+              {activeTab === 'clients' && (
+                <div className="admin-card">
+                  <div className="card-header-with-actions">
+                    <h3>Mis Clientes</h3>
+                  </div>
+                  
+                  {loading ? (
+                    <div className="loading-container">
+                      <div className="spinner"></div>
+                      <p>Cargando clientes...</p>
+                    </div>
+                  ) : clients.length === 0 ? (
+                    <div className="empty-state">
+                      <p>No tienes clientes asignados actualmente.</p>
+                    </div>
+                  ) : (
+                    <div className="client-cards">
+                      {clients.map(client => (
+                        <div key={client.id_usuario} className="client-card">
+                          <div className="client-info">
+                            <div className="client-avatar">
+                              <img src="/src/assets/icons/usuario.png" alt="Avatar" width="50" height="50" />
+                            </div>
+                            <div className="client-details">
+                              <h3>{client.nombre}</h3>
+                              <p>{client.email}</p>
+                              <p className="assignment-date">
+                                <small>Asignado desde: {new Date(client.fecha_asignacion).toLocaleDateString()}</small>
+                              </p>
+                            </div>
+                          </div>
+                          <div className="client-actions">
+                            <button 
+                              className="coach-button primary" 
+                              onClick={() => handleViewDetails(client)}
+                            >
+                              Ver detalles
+                            </button>
+                            <button 
+                              className="coach-button secondary" 
+                              onClick={() => navigate(`/coach/rutina/${client.id_usuario}`)}
+                            >
+                              Asignar rutina
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {activeTab === 'requests' && (
+                <div className="admin-card">
+                  <div className="card-header-with-actions">
+                    <h3>Solicitudes Pendientes</h3>
+                  </div>
+                  
+                  {loading ? (
+                    <div className="loading-container">
+                      <div className="spinner"></div>
+                      <p>Cargando solicitudes...</p>
+                    </div>
+                  ) : pendingRequests.length === 0 ? (
+                    <div className="empty-state">
+                      <p>No hay solicitudes pendientes en este momento.</p>
+                    </div>
+                  ) : (
+                    <div className="request-table-container">
+                      <table className="coach-table">
+                        <thead>
+                          <tr>
+                            <th>Cliente</th>
+                            <th>Email</th>
+                            <th>Fecha solicitud</th>
+                            <th>Tipo membresía</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {pendingRequests.map(request => (
+                            <tr key={request.id_asignacion}>
+                              <td>{request.nombre}</td>
+                              <td>{request.email}</td>
+                              <td>{new Date(request.fecha_asignacion).toLocaleDateString()}</td>
+                              <td>{request.tipo_membresia || 'No especificado'}</td>
+                              <td>
+                                <div className="table-actions">
+                                  <button 
+                                    className="action-button accept"
+                                    onClick={() => handleAcceptRequest(request.id_asignacion)}
+                                  >
+                                    Aceptar
+                                  </button>
+                                  <button 
+                                    className="action-button reject"
+                                    onClick={() => handleRejectRequest(request.id_asignacion)}
+                                  >
+                                    Rechazar
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            {/* Acciones Rápidas */}
+            <div className="admin-cards-row">
+              <div className="admin-card">
+                <h3>Acciones Rápidas</h3>
+                
+                <div className="quick-actions">
+                  <button className="quick-action-button" onClick={() => navigate('/coach/rutinas/plantillas')}>
+                    <div className="quick-action-icon"></div>
+                    <span>Plantillas de Rutinas</span>
+                  </button>
+                  
+                  <button className="quick-action-button" onClick={() => navigate('/coach/calendario')}>
+                    <div className="quick-action-icon"></div>
+                    <span>Calendario de Citas</span>
+                  </button>
+                  
+                  <button className="quick-action-button" onClick={() => navigate('/coach/medidas/registrar')}>
+                    <div className="quick-action-icon"></div>
+                    <span>Registrar Medidas</span>
+                  </button>
+                  
+                  <button className="quick-action-button" onClick={() => navigate('/coach/perfil')}>
+                    <div className="quick-action-icon"></div>
+                    <span>Actualizar Perfil</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div className="coach-tabs">
-          <button 
-            className={`coach-tab ${activeTab === 'clients' ? 'active' : ''}`}
-            onClick={() => setActiveTab('clients')}
-          >
-            Mis Clientes ({clients.length})
-          </button>
-          <button 
-            className={`coach-tab ${activeTab === 'requests' ? 'active' : ''}`}
-            onClick={() => setActiveTab('requests')}
-          >
-            Solicitudes Pendientes 
-            {pendingRequests.length > 0 && (
-              <span className="notification-badge">{pendingRequests.length}</span>
-            )}
-          </button>
-        </div>
-        
-        {activeTab === 'clients' && (
-          <div className="coach-section">
-            <h2>Mis Clientes</h2>
-            
-            {loading ? (
-              <div className="loading-container">
-                <div className="spinner"></div>
-                <p>Cargando clientes...</p>
-              </div>
-            ) : clients.length === 0 ? (
-              <div className="empty-state">
-                <p>No tienes clientes asignados actualmente.</p>
-              </div>
-            ) : (
-              <div className="client-cards">
-                {clients.map(client => (
-                  <div key={client.id_usuario} className="client-card">
-                    <div className="client-info">
-                      <div className="client-avatar">
-                        <img src="/src/assets/icons/usuario.png" alt="Avatar" width="50" height="50" />
-                      </div>
-                      <div className="client-details">
-                        <h3>{client.nombre}</h3>
-                        <p>{client.email}</p>
-                        <p className="assignment-date">
-                          <small>Asignado desde: {new Date(client.fecha_asignacion).toLocaleDateString()}</small>
-                        </p>
-                      </div>
-                    </div>
-                    <div className="client-actions">
-                      <button 
-                        className="coach-button primary" 
-                        onClick={() => handleViewDetails(client)}
-                      >
-                        Ver detalles
-                      </button>
-                      <button 
-                        className="coach-button secondary" 
-                        onClick={() => navigate(`/coach/rutina/${client.id_usuario}`)}
-                      >
-                        Asignar rutina
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-        
-        {activeTab === 'requests' && (
-          <div className="coach-section">
-            <h2>Solicitudes Pendientes</h2>
-            
-            {loading ? (
-              <div className="loading-container">
-                <div className="spinner"></div>
-                <p>Cargando solicitudes...</p>
-              </div>
-            ) : pendingRequests.length === 0 ? (
-              <div className="empty-state">
-                <p>No hay solicitudes pendientes en este momento.</p>
-              </div>
-            ) : (
-              <div className="request-table-container">
-                <table className="coach-table">
-                  <thead>
-                    <tr>
-                      <th>Cliente</th>
-                      <th>Email</th>
-                      <th>Fecha solicitud</th>
-                      <th>Tipo membresía</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pendingRequests.map(request => (
-                      <tr key={request.id_asignacion}>
-                        <td>{request.nombre}</td>
-                        <td>{request.email}</td>
-                        <td>{new Date(request.fecha_asignacion).toLocaleDateString()}</td>
-                        <td>{request.tipo_membresia || 'No especificado'}</td>
-                        <td>
-                          <div className="table-actions">
-                            <button 
-                              className="action-button accept"
-                              onClick={() => handleAcceptRequest(request.id_asignacion)}
-                            >
-                              Aceptar
-                            </button>
-                            <button 
-                              className="action-button reject"
-                              onClick={() => handleRejectRequest(request.id_asignacion)}
-                            >
-                              Rechazar
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );
