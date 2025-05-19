@@ -745,7 +745,6 @@ const GestionUsuarios = () => {
           <button className="menu-button" onClick={() => navigate('/admin/dashboard')}>Dashboard</button>
           <button className="menu-button" onClick={() => navigate('/admin/coaches')}>Gestión de Coaches</button>
           <button className="menu-button active">Gestión de Usuarios</button>
-          <button className="menu-button" onClick={() => navigate('/admin/membresias')}>Membresías</button>
           <button className="menu-button" onClick={handleLogout}>Cerrar sesión</button>
         </div>
       </div>
@@ -755,7 +754,7 @@ const GestionUsuarios = () => {
           {/* Tarjeta de usuario */}
           <div className="user-card">
             <div className="user-avatar">
-              <img src="/src/assets/icons/admin.png" alt="Admin Avatar" width="50" height="50" />
+                <img src="/src/assets/icons/admin.webp" alt="Admin Avatar" width="50" height="50" />
             </div>
             <div className="user-info">
               <div className="user-name">{user?.name || 'Administrador'}</div>
@@ -794,7 +793,6 @@ const GestionUsuarios = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <span className="search-icon">🔍</span>
                 </div>
                 
                 <div className="filter-container">

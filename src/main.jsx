@@ -16,6 +16,8 @@ import Entrenadores from './pages/cliente/Entrenadores'
 
 // Páginas del coach
 import CoachDashboard from './pages/coach/Dashboard'
+import CoachPerfil from './pages/coach/InformacionCoach'
+import PerfilCoach from './pages/coach/PerfilCoach'
 
 // Páginas del administrador
 import AdminDashboard from './pages/admin/Dashboard'
@@ -119,7 +121,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <RoleRoute allowedRoles={['coach']}>
               <CoachDashboard />
             </RoleRoute>
+            
           } />
+           <Route path="/coach/InformacionCoach/:clientId" element={
+            <RoleRoute allowedRoles={['coach']}>
+              <CoachPerfil />
+            </RoleRoute>
+            } />
+            <Route path="/coach/data" element={
+            <RoleRoute allowedRoles={['coach']}>
+              <PerfilCoach />
+            </RoleRoute>
+            } />
           
           {/* Rutas del administrador */}
           <Route path="/admin/dashboard" element={

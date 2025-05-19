@@ -37,7 +37,38 @@ const api = {
       throw error;
     }
   },
-  
+  getCoachRoutines: async () => {
+  try {
+    const response = await axiosInstance.get('/coach/routines');
+    return response;
+  } catch (error) {
+    console.error('Error en getCoachRoutines:', error);
+    throw error;
+  }
+},
+
+assignRoutineToClient: async (clientId, routineId) => {
+  try {
+    const response = await axiosInstance.post('/coach/assign-routine', {
+      userId: clientId,
+      routineId: routineId
+    });
+    return response;
+  } catch (error) {
+    console.error('Error en assignRoutineToClient:', error);
+    throw error;
+  }
+},
+
+getClientRoutines: async () => {
+  try {
+    const response = await axiosInstance.get('/client/routines');
+    return response;
+  } catch (error) {
+    console.error('Error en getClientRoutines:', error);
+    throw error;
+  }
+},
   // Autenticación
   login: async (email, password) => {
     try {
@@ -682,9 +713,11 @@ rejectProfileUpdate: async (requestId) => {
 },
 
 
+// Función updateProfile mejorada en api.js
+
 updateProfile: async (userData) => {
   try {
-    console.log('Enviando datos para actualizar perfil:', userData);
+    console.log('Enviando solicitud de actualización de perfil con datos:', JSON.stringify(userData, null, 2));
     
     // Verificar si hay token en localStorage
     const token = localStorage.getItem('token');
@@ -693,8 +726,93 @@ updateProfile: async (userData) => {
       throw new Error('No hay token de autenticación');
     }
     
-    // Hacer la solicitud con manejo explícito de respuesta
-    const response = await axiosInstance.put('/auth/profile', userData);
+    // Registrar la URL completa para depuración
+    const url = `${API_URL}/auth/profile`;
+    console.log('URL de solicitud:', url);
+    console.log('Cabeceras:', {
+      'Content-Type': 'application/json',
+      'x-auth-token': token.substring(0, 10) + '...'
+    });
+    
+    // Hacer la solicitud con configuración explícita para mejor depuración
+    const response = await axios({
+      method: 'put',
+      url: url,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': token
+      },
+      data: userData,
+      timeout: 10000 // 10 segundos de timeout
+    });
+    
+    // Verificar si la respuesta es exitosa
+    if (response.status !== 200) {
+      console.error('Respuesta con código inesperado:', response.status);
+      throw new Error(`Error en la respuesta: ${response.status}`);
+    }
+    
+    // Verificar si hay datos en la respuesta
+    if (!response.data) {
+      console.error('La respuesta no contiene datos');
+      throw new Error('La respuesta no contiene datos del usuario');
+    }
+    
+    console.log('Respuesta del servidor:', JSON.stringify(response.data, null, 2));
+    console.log('Perfil actualizado correctamente');
+    
+    return response.data;
+  } catch (error) {
+    console.error('Error completo al actualizar perfil:', error);
+    
+    // Manejo detallado de errores
+    if (error.response) {
+      console.error('Datos de la respuesta de error:', error.response.data);
+      console.error('Estado HTTP:', error.response.status);
+      console.error('Cabeceras de respuesta:', error.response.headers);
+      
+      // Mensaje específico según el código de error
+      if (error.response.status === 401) {
+        console.error('Error de autenticación: Token inválido o expirado');
+        localStorage.removeItem('token');
+        throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
+      } else if (error.response.status === 403) {
+        console.error('Error de permisos: No autorizado para realizar esta acción');
+        throw new Error('No tienes permisos para actualizar el perfil.');
+      } else if (error.response.status === 404) {
+        console.error('Endpoint no encontrado');
+        throw new Error('El servicio de actualización de perfil no está disponible.');
+      } else if (error.response.status === 500) {
+        console.error('Error interno del servidor:', error.response.data);
+        throw new Error(`Error interno del servidor: ${error.response.data.message || 'Error desconocido'}`);
+      } else {
+        console.error(`Error ${error.response.status}:`, error.response.data);
+        throw new Error(error.response.data.message || 'Error al actualizar el perfil.');
+      }
+    } else if (error.request) {
+      console.error('No se recibió respuesta del servidor. Detalles de la solicitud:', error.request);
+      throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
+    } else {
+      console.error('Error al configurar la solicitud:', error.message);
+      throw new Error(`Error en la aplicación: ${error.message}`);
+    }
+  }
+},
+// Nueva función específica para actualizar perfil de coach en api.js
+
+updateCoachProfile: async (coachData) => {
+  try {
+    console.log('Enviando solicitud de actualización de perfil de coach:', coachData);
+    
+    // Verificar si hay token en localStorage
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No hay token almacenado en localStorage');
+      throw new Error('No hay token de autenticación');
+    }
+    
+    // Hacer la solicitud a un nuevo endpoint específico para actualizar coach
+    const response = await axiosInstance.post('/coach/update-profile', coachData);
     
     // Verificar si la respuesta es exitosa
     if (response.status !== 200) {
@@ -705,10 +823,10 @@ updateProfile: async (userData) => {
     // Verificar si hay datos en la respuesta
     if (!response.data) {
       console.error('La respuesta no contiene datos');
-      throw new Error('La respuesta no contiene datos del usuario');
+      throw new Error('La respuesta no contiene datos del coach');
     }
     
-    console.log('Perfil actualizado correctamente:', response.data);
+    console.log('Perfil de coach actualizado correctamente:', response.data);
     return response.data;
   } catch (error) {
     // Manejo detallado de errores
@@ -728,10 +846,10 @@ updateProfile: async (userData) => {
         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
       } else if (error.response.status === 403) {
         console.error('Error de permisos: No autorizado para realizar esta acción');
-        throw new Error('No tienes permisos para actualizar el perfil.');
+        throw new Error('No tienes permisos para actualizar el perfil de coach.');
       } else {
         console.error(`Error ${error.response.status}: ${error.response.data.message || 'Error del servidor'}`);
-        throw new Error(error.response.data.message || 'Error al actualizar el perfil.');
+        throw new Error(error.response.data.message || 'Error al actualizar el perfil de coach.');
       }
     } else if (error.request) {
       // La solicitud fue hecha pero no se recibió respuesta
@@ -744,7 +862,6 @@ updateProfile: async (userData) => {
     }
   }
 },
-
 
 // Función para actualizar la contraseña
 updatePassword: async (currentPassword, newPassword) => {
@@ -1048,7 +1165,112 @@ createClientMembership: async (membershipData) => {
     throw error;
   }
 },
-
+// Función mejorada para guardar medidas físicas
+savePhysicalMeasurements: async (physicalData) => {
+  try {
+    console.log('Enviando medidas físicas para guardar:', physicalData);
+    
+    // Verificar si hay token en localStorage
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No hay token almacenado en localStorage');
+      throw new Error('No hay token de autenticación');
+    }
+    
+    // Variable para almacenar la respuesta
+    let response = null;
+    let usedEndpoint = '';
+    
+    // Intentar con el primer endpoint
+    try {
+      console.log('Intentando con endpoint principal: /client/physical-measurements');
+      response = await axiosInstance.post('/client/physical-measurements', physicalData);
+      usedEndpoint = 'principal';
+    } catch (primaryError) {
+      console.warn('Error en endpoint principal:', primaryError.message);
+      
+      // Solo intentar con el endpoint alternativo si el primero falló con 404
+      if (primaryError.response && primaryError.response.status === 404) {
+        console.log('Endpoint principal no encontrado, intentando endpoint alternativo...');
+        try {
+          response = await axiosInstance.post('/usuarios/medidas-fisicas', physicalData);
+          usedEndpoint = 'alternativo';
+        } catch (fallbackError) {
+          console.error('Error en endpoint alternativo:', fallbackError);
+          throw fallbackError; // Propagar el error del endpoint alternativo
+        }
+      } else {
+        // Si no es 404, propagar el error original
+        throw primaryError;
+      }
+    }
+    
+    // Verificar si la respuesta es exitosa
+    if (response.status !== 201 && response.status !== 200) {
+      console.error('Respuesta con código inesperado:', response.status);
+      throw new Error(`Error en la respuesta: ${response.status}`);
+    }
+    
+    console.log(`Medidas físicas guardadas correctamente usando endpoint ${usedEndpoint}:`, response.data);
+    return response.data;
+  } catch (error) {
+    // Manejo detallado de errores
+    if (error.response) {
+      console.error('Error de respuesta del servidor:', {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+      
+      // Mensaje específico según el código de error
+      if (error.response.status === 401) {
+        console.error('Error de autenticación: Token inválido o expirado');
+        localStorage.removeItem('token');
+        throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
+      } else if (error.response.status === 403) {
+        console.error('Error de permisos: No autorizado para realizar esta acción');
+        throw new Error('No tienes permisos para realizar esta acción.');
+      } else if (error.response.status === 404) {
+        console.error('Error 404: Endpoints para medidas físicas no encontrados');
+        throw new Error('La funcionalidad para guardar medidas físicas no está disponible en este momento. Contacte al administrador.');
+      } else {
+        console.error(`Error ${error.response.status}: ${error.response.data.message || 'Error del servidor'}`);
+        throw new Error(error.response.data.message || 'Error al guardar medidas físicas.');
+      }
+    } else if (error.request) {
+      console.error('No se recibió respuesta del servidor:', error.request);
+      throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
+    } else {
+      console.error('Error al configurar la solicitud:', error.message);
+      throw new Error('Error en la aplicación. Por favor contacte al administrador.');
+    }
+  }
+},
+// Función mejorada para obtener medidas físicas del usuario
+getPhysicalMeasurements: async () => {
+  try {
+    console.log('Solicitando historial de medidas físicas');
+    const response = await axiosInstance.get('/physical-measurements');
+    console.log('Respuesta de medidas físicas:', response.data);
+    return response.data;
+  } catch (error) {
+    // Si el endpoint principal falla, intentamos con un endpoint alternativo
+    if (error.response && error.response.status === 404) {
+      try {
+        console.log('Endpoint principal no encontrado, intentando endpoint alternativo...');
+        const fallbackResponse = await axiosInstance.get('/usuarios/medidas-fisicas');
+        console.log('Medidas físicas obtenidas correctamente con endpoint alternativo:', fallbackResponse.data);
+        return fallbackResponse.data;
+      } catch (fallbackError) {
+        console.error('Error en endpoint alternativo:', fallbackError);
+        return []; // Devolver array vacío en caso de error en ambos endpoints
+      }
+    }
+    
+    console.error('Error al obtener medidas físicas:', error);
+    return []; // Retornar array vacío en caso de error
+  }
+},
 renewClientMembership: async (id_suscripcion, membershipData) => {
   try {
     console.log('Renovando membresía:', id_suscripcion, membershipData);
@@ -1116,38 +1338,65 @@ requestCoach: async (coachId) => {
 },
 // Añade estas funciones al objeto api en api.js
 
-// Obtener información de un cliente específico
-getClientById: async (clientId) => {
-  try {
-    const response = await axiosInstance.get(`/coach/clients/${clientId}`);
-    return response;
-  } catch (error) {
-    console.error('Error al obtener información del cliente:', error);
-    throw error;
-  }
-},
+  getClientById: async (clientId) => {
+    try {
+      const response = await axiosInstance.get(`/coach/clients/${clientId}`);
+      return response;
+    } catch (error) {
+      console.error('Error al obtener información del cliente:', error);
+      throw error;
+    }
+  },
 
-// Obtener rutinas de un cliente
-getClientRoutines: async (clientId) => {
-  try {
-    const response = await axiosInstance.get(`/coach/clients/${clientId}/routines`);
-    return response;
-  } catch (error) {
-    console.error('Error al obtener rutinas del cliente:', error);
-    throw error;
-  }
-},
+  // Obtener rutinas de un cliente
+  getClientRoutines: async (clientId) => {
+    try {
+      const response = await axiosInstance.get(`/coach/clients/${clientId}/routines`);
+      return response;
+    } catch (error) {
+      console.error('Error al obtener rutinas del cliente:', error);
+      throw error;
+    }
+  },
+    getExercises: async () => {
+    try {
+      const response = await axiosInstance.get('/coach/exercises');
+      return response;
+    } catch (error) {
+      console.error('Error al obtener ejercicios:', error);
+      throw error;
+    }
+  },
 
 // Guardar rutina de un cliente
-saveClientRoutine: async (clientId, routineData) => {
-  try {
-    const response = await axiosInstance.post(`/coach/clients/${clientId}/routines`, routineData);
-    return response;
-  } catch (error) {
-    console.error('Error al guardar rutina del cliente:', error);
-    throw error;
-  }
+  saveClientRoutine: async (clientId, routineData) => {
+    try {
+      const response = await axiosInstance.post(`/coach/clients/${clientId}/routines`, routineData);
+      return response;
+    } catch (error) {
+      console.error('Error al guardar rutina del cliente:', error);
+      throw error;
+    }
 },
+  // Obtener un ejercicio específico
+  getExerciseById: async (exerciseId) => {
+    try {
+      const response = await axiosInstance.get(`/coach/exercises/${exerciseId}`);
+      return response;
+    } catch (error) {
+      console.error('Error al obtener ejercicio:', error);
+      throw error;
+    }
+  },
+    createExercise: async (exerciseData) => {
+    try {
+      const response = await axiosInstance.post('/coach/exercises', exerciseData);
+      return response;
+    } catch (error) {
+      console.error('Error al crear ejercicio:', error);
+      throw error;
+    }
+  },
 // Esta función es opcional, sólo si necesitas ver el historial
 getClientMembershipHistory: async () => {
   try {
@@ -1181,37 +1430,10 @@ const verifyEmailDirect = async (token) => {
 // Agregar estas funciones al objeto api en client/src/services/api.js
 
 // Obtener todos los ejercicios disponibles
-getExercises: async () => {
-  try {
-    const response = await axiosInstance.get('/coach/exercises');
-    return response;
-  } catch (error) {
-    console.error('Error al obtener ejercicios:', error);
-    throw error;
-  }
-};
 
-// Obtener un ejercicio específico
-getExerciseById: async (exerciseId) => {
-  try {
-    const response = await axiosInstance.get(`/coach/exercises/${exerciseId}`);
-    return response;
-  } catch (error) {
-    console.error('Error al obtener ejercicio:', error);
-    throw error;
-  }
-};
 
-// Crear un nuevo ejercicio
-createExercise: async (exerciseData) => {
-  try {
-    const response = await axiosInstance.post('/coach/exercises', exerciseData);
-    return response;
-  } catch (error) {
-    console.error('Error al crear ejercicio:', error);
-    throw error;
-  }
-};
+
+
 
 // Exportarlos
 export { verifyEmail, verifyEmailDirect };

@@ -1,442 +1,461 @@
-// client/src/pages/coach/InformacionCoach.jsx
+// client/src/pages/coach/InformacionCoach.jsx esto en realidad es asignar rutinas pero shh
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-import './CoachStyles.css'; // Usando los mismos estilos que el Dashboard
+import './CoachStyles.css';
+import Informacion from '../cliente/Informacion';
 
 const InformacionCoach = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const { clientId } = useParams();
   const navigate = useNavigate();
   
-  const [coachData, setCoachData] = useState(null);
+  const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
+  const [routines, setRoutines] = useState([]);
+  const [exercises, setExercises] = useState([]);
+  const [notification, setNotification] = useState(null);
   
-  // Estado para el modo de edición
-  const [isEditing, setIsEditing] = useState(false);
-  // Estado para el formulario de edición
-  const [formData, setFormData] = useState({
+  // Formulario para nueva rutina
+  const [routineForm, setRoutineForm] = useState({
     nombre: '',
-    email: '',
-    telefono: '',
-    especialidad: '',
-    certificaciones: '',
-    biografia: '',
-    horario_disponible: '',
-    experiencia: ''
+    descripcion: '',
+    objetivo: '',
+    nivel_dificultad: 'principiante',
+    duracion_estimada: 60
   });
-  // Estado para mensajes de éxito o error en la edición
-  const [updateMessage, setUpdateMessage] = useState({ type: '', text: '' });
-  // Estado para el proceso de guardado
-  const [isSaving, setSaving] = useState(false);
   
-  // Cargar datos del entrenador
+  // Ejercicios seleccionados
+  const [selectedExercises, setSelectedExercises] = useState([]);
+  
+  // Cargar datos del cliente
   useEffect(() => {
-    const fetchCoachData = async () => {
+    const fetchClientData = async () => {
       try {
         setLoading(true);
-        setError('');
+        setError(null);
         
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('No hay token de autenticación');
-          setError('No se ha iniciado sesión');
-          setLoading(false);
-          return;
-        }
+        // Obtener datos del cliente
+        const clientResponse = await api.getClientById(clientId);
+        setClient(clientResponse.data);
         
-        console.log('Intentando cargar datos del entrenador...');
-        try {
-          const response = await api.getCoachProfile();
-          console.log('Respuesta del servidor:', response);
-          
-          if (response) {
-            setCoachData(response);
-            setFormData({
-              nombre: response.nombre || '',
-              email: response.email || '',
-              telefono: response.telefono || '',
-              especialidad: response.especialidad || '',
-              certificaciones: response.certificaciones || '',
-              biografia: response.biografia || '',
-              horario_disponible: response.horario_disponible || '',
-              experiencia: response.experiencia || ''
-            });
-          } else {
-            throw new Error('No se recibieron datos del entrenador');
-          }
-        } catch (apiError) {
-          console.error('Error en la API:', apiError);
-          
-          if (user) {
-            const fallbackData = {
-              id_coach: user.id,
-              nombre: user.name || user.nombre || 'Entrenador',
-              email: user.email || '',
-              tipo_usuario: 'entrenador',
-              estado: user.estado || 'activo'
-            };
-            setCoachData(fallbackData);
-            setFormData({
-              nombre: fallbackData.nombre || '',
-              email: fallbackData.email || '',
-              telefono: '',
-              especialidad: '',
-              certificaciones: '',
-              biografia: '',
-              horario_disponible: '',
-              experiencia: ''
-            });
-          } else {
-            throw new Error('No se pudieron obtener datos del entrenador');
-          }
-        }
+        // Obtener rutinas existentes
+        const routinesResponse = await api.getClientRoutines(clientId);
+        setRoutines(routinesResponse.data || []);
+        
+        // Obtener ejercicios disponibles
+        const exercisesResponse = await api.getExercises();
+        setExercises(exercisesResponse.data || []);
+        
+        setLoading(false);
       } catch (error) {
-        console.error('Error al cargar datos del entrenador:', error);
-        setError('No se pudieron cargar los datos del perfil. Por favor, intente nuevamente.');
-      } finally {
+        console.error('Error al cargar datos:', error);
+        setError('Error al cargar los datos. Por favor, intenta nuevamente.');
         setLoading(false);
       }
     };
     
-    fetchCoachData();
-  }, [user]);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+    fetchClientData();
+  }, [clientId]);
   
   // Manejar cambios en el formulario
-  const handleChange = (e) => {
+  const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setRoutineForm(prev => ({
+      ...prev,
       [name]: value
-    });
+    }));
   };
-
-  // Manejar el envío del formulario
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  
+  // Agregar ejercicio a la rutina
+  const addExercise = (exercise) => {
+    const newExercise = {
+      ...exercise,
+      orden: selectedExercises.length + 1,
+      series: 3,
+      repeticiones: '12',
+      descanso_segundos: 60,
+      notas: ''
+    };
     
-    try {
-      setSaving(true);
-      setUpdateMessage({ type: '', text: '' });
+    setSelectedExercises(prev => [...prev, newExercise]);
+  };
+  
+  // Remover ejercicio de la rutina
+  const removeExercise = (exerciseId) => {
+    setSelectedExercises(prev => 
+      prev.filter(ex => ex.id_ejercicio !== exerciseId)
+          .map((ex, index) => ({ ...ex, orden: index + 1 }))
+    );
+  };
+  
+  // Actualizar datos de un ejercicio
+  const updateExerciseDetails = (exerciseId, field, value) => {
+    setSelectedExercises(prev => 
+      prev.map(ex => 
+        ex.id_ejercicio === exerciseId 
+          ? { ...ex, [field]: value } 
+          : ex
+      )
+    );
+  };
+  
+  // Mover ejercicio arriba/abajo en la lista
+  const moveExercise = (exerciseId, direction) => {
+    const currentIndex = selectedExercises.findIndex(ex => ex.id_ejercicio === exerciseId);
+    if (
+      (direction === 'up' && currentIndex > 0) || 
+      (direction === 'down' && currentIndex < selectedExercises.length - 1)
+    ) {
+      const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+      const newExercises = [...selectedExercises];
       
-      const updateData = {
-        id_coach: coachData.id_coach,
-        nombre: formData.nombre,
-        email: formData.email,
-        telefono: formData.telefono || null,
-        especialidad: formData.especialidad || null,
-        certificaciones: formData.certificaciones || null,
-        biografia: formData.biografia || null,
-        horario_disponible: formData.horario_disponible || null,
-        experiencia: formData.experiencia || null
-      };
+      // Intercambiar elementos
+      [newExercises[currentIndex], newExercises[newIndex]] = 
+      [newExercises[newIndex], newExercises[currentIndex]];
       
-      console.log('Enviando datos actualizados:', updateData);
+      // Actualizar orden
+      const updatedExercises = newExercises.map((ex, idx) => ({
+        ...ex,
+        orden: idx + 1
+      }));
       
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/coaches/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token
-        },
-        body: JSON.stringify(updateData)
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Perfil actualizado correctamente:', data);
-        
-        setCoachData({
-          ...coachData,
-          ...updateData
-        });
-        
-        setUpdateMessage({ 
-          type: 'success', 
-          text: 'Perfil actualizado con éxito' 
-        });
-        
-        setIsEditing(false);
-      } else {
-        const errorData = await response.json().catch(() => ({ message: 'Error desconocido' }));
-        throw new Error(errorData.message || `Error ${response.status}: No se pudo actualizar el perfil`);
-      }
-    } catch (error) {
-      console.error('Error al actualizar el perfil:', error);
-      setUpdateMessage({ 
-        type: 'error', 
-        text: `Error: ${error.message}` 
-      });
-    } finally {
-      setSaving(false);
+      setSelectedExercises(updatedExercises);
     }
   };
-
-  const handleEdit = () => {
-    setIsEditing(true);
-    setUpdateMessage({ type: '', text: '' });
+  
+  // Guardar la rutina
+  const saveRoutine = async () => {
+    // Validaciones básicas
+    if (!routineForm.nombre.trim()) {
+      setNotification({
+        type: 'error',
+        message: 'Debes asignar un nombre a la rutina'
+      });
+      return;
+    }
+    
+    if (selectedExercises.length === 0) {
+      setNotification({
+        type: 'error',
+        message: 'La rutina debe contener al menos un ejercicio'
+      });
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      // Preparar datos de la rutina
+      const routineData = {
+        ...routineForm,
+        ejercicios: selectedExercises.map(ex => ({
+          id_ejercicio: ex.id_ejercicio,
+          orden: ex.orden,
+          series: ex.series,
+          repeticiones: ex.repeticiones,
+          descanso_segundos: ex.descanso_segundos,
+          notas: ex.notas
+        }))
+      };
+      
+      // Enviar rutina al servidor
+      await api.saveClientRoutine(clientId, routineData);
+      
+      setNotification({
+        type: 'success',
+        message: 'Rutina asignada correctamente'
+      });
+      
+      // Después de 2 segundos, redirigir al dashboard
+      setTimeout(() => {
+        navigate('/coach/dashboard');
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error al guardar rutina:', error);
+      setNotification({
+        type: 'error',
+        message: 'Error al guardar la rutina. Por favor, intenta nuevamente.'
+      });
+      setLoading(false);
+    }
   };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setUpdateMessage({ type: '', text: '' });
-    setFormData({
-      nombre: coachData.nombre || '',
-      email: coachData.email || '',
-      telefono: coachData.telefono || '',
-      especialidad: coachData.especialidad || '',
-      certificaciones: coachData.certificaciones || '',
-      biografia: coachData.biografia || '',
-      horario_disponible: coachData.horario_disponible || '',
-      experiencia: coachData.experiencia || ''
-    });
-  };
-
+  
   return (
-    <div className="coach-container">
-      <div className="coach-sidebar">
-        <div className="coach-logo">
+    <div className="container">
+      <div className="sidebar">
+        <div className="logo">
           <div className="logo-circle">
-            <img src="/src/assets/icons/logo.png" alt="Logo Gimnasio" width="60" height="60" />
+            <img src="/logo.png" alt="Logo Gimnasio" className='logo-img' />
           </div>
         </div>
         
-        <nav className="coach-nav">
-          <button className="coach-nav-button" onClick={() => navigate('/coach/dashboard')}>Dashboard</button>
-          <button className="coach-nav-button" onClick={() => navigate('/coach/rutinas')}>Rutinas</button>
-          <button className="coach-nav-button active">Mi Perfil</button>
-          <button className="coach-nav-button" onClick={handleLogout}>Cerrar sesión</button>
-        </nav>
+        <div className="menu-buttons">
+          <button className="menu-button" onClick={() => navigate('/coach/dashboard')}>Dashboard</button>
+          <button className="menu-button active">Rutinas</button>
+          <button className="menu-button" onClick={() => navigate('/coach/data')}>Mi Perfil</button>
+          <button className="menu-button" onClick={() => navigate('/logout')}>Cerrar sesión</button>
+        </div>
       </div>
       
-      <div className="coach-content">
-        <div className="coach-header">
-          <h1>Mi Perfil de Entrenador</h1>
-          <div className="coach-profile">
-            <span>{user?.name || 'Entrenador'}</span>
-            <div className="coach-avatar">
-              <img src="/src/assets/icons/usuario.png" alt="Avatar" width="40" height="40" />
+      <div className="main-content">
+        <div className="content-wrapper">
+          {/* Mensaje de error si existe */}
+          {error && (
+            <div className="error-message">
+              {error}
+              <button className="error-close" onClick={() => setError(null)}>×</button>
             </div>
-          </div>
-        </div>
-        
-        {error && (
-          <div className="notification error">
-            {error}
-          </div>
-        )}
-        
-        {loading ? (
-          <div className="loading-container">
-            <div className="spinner"></div>
-            <p>Cargando información del entrenador...</p>
-          </div>
-        ) : (
-          <div className="coach-section">
-            <h2>Mi Perfil</h2>
-            
-            {updateMessage.text && (
-              <div className={`notification ${updateMessage.type}`}>
-                {updateMessage.text}
-              </div>
-            )}
-            
-            {!isEditing ? (
-              <div className="profile-card">
-                <div className="coach-card-header">
-                  <h3>Información Personal</h3>
-                  <button className="coach-button secondary" onClick={handleEdit}>
-                    <span className="edit-icon">✏️</span> Editar
+          )}
+          
+          {notification && (
+            <div className={`notification ${notification.type}`}>
+              {notification.message}
+            </div>
+          )}
+          
+          {loading ? (
+            <div className="loading-container">
+              <div className="spinner"></div>
+              <p>Cargando datos...</p>
+            </div>
+          ) : (
+            <>
+              <div className="page-header">
+                <h1>Asignar Rutina</h1>
+                <div className="client-info">
+                  <span>Cliente: </span>
+                  <strong>{client?.nombre || 'Cliente'}</strong>
+                </div>
+                <div className="action-buttons">
+                  <button 
+                    className="coach-button secondary"
+                    onClick={() => navigate('/coach/dashboard')}
+                  >
+                    Volver
                   </button>
                 </div>
-                
-                <div className="profile-avatar">
-                  <div className="avatar-placeholder">
-                    {coachData.nombre ? coachData.nombre.charAt(0).toUpperCase() : 'E'}
-                  </div>
-                </div>
-                
-                <div className="profile-info">
-                  <h3>{coachData.nombre || 'Entrenador'}</h3>
-                  <p className="email">{coachData.email || ''}</p>
+              </div>
+              
+              <div className="routine-container">
+                <div className="routine-form">
+                  <h3>Información de la Rutina</h3>
                   
-                  <div className="info-grid">
-                    <div className="info-item">
-                      <span className="label">Teléfono:</span>
-                      <span className="value">{coachData.telefono || 'No especificado'}</span>
+                  <div className="form-group">
+                    <label htmlFor="nombre">Nombre de la Rutina</label>
+                    <input
+                      type="text"
+                      id="nombre"
+                      name="nombre"
+                      value={routineForm.nombre}
+                      onChange={handleFormChange}
+                      placeholder="Ej. Rutina Full Body"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="objetivo">Objetivo</label>
+                    <input
+                      type="text"
+                      id="objetivo"
+                      name="objetivo"
+                      value={routineForm.objetivo}
+                      onChange={handleFormChange}
+                      placeholder="Ej. Pérdida de peso"
+                    />
+                  </div>
+                  
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="nivel_dificultad">Nivel de Dificultad</label>
+                      <select
+                        id="nivel_dificultad"
+                        name="nivel_dificultad"
+                        value={routineForm.nivel_dificultad}
+                        onChange={handleFormChange}
+                      >
+                        <option value="principiante">Principiante</option>
+                        <option value="intermedio">Intermedio</option>
+                        <option value="avanzado">Avanzado</option>
+                      </select>
                     </div>
                     
-                    <div className="info-item">
-                      <span className="label">Especialidad:</span>
-                      <span className="value">{coachData.especialidad || 'No especificada'}</span>
-                    </div>
-                    
-                    <div className="info-item">
-                      <span className="label">Certificaciones:</span>
-                      <span className="value">{coachData.certificaciones || 'No especificadas'}</span>
-                    </div>
-                    
-                    <div className="info-item">
-                      <span className="label">Años de experiencia:</span>
-                      <span className="value">{coachData.experiencia || 'No especificado'}</span>
-                    </div>
-                    
-                    <div className="info-item coach-biography">
-                      <span className="label">Biografía:</span>
-                      <span className="value">{coachData.biografia || 'No has agregado tu biografía todavía.'}</span>
-                    </div>
-                    
-                    <div className="info-item">
-                      <span className="label">Horario disponible:</span>
-                      <span className="value">{coachData.horario_disponible || 'No especificado'}</span>
-                    </div>
-                    
-                    <div className="info-item">
-                      <span className="label">Tipo de Usuario:</span>
-                      <span className="value">Entrenador</span>
-                    </div>
-                    
-                    <div className="info-item">
-                      <span className="label">Estado:</span>
-                      <span className="value">Activo</span>
+                    <div className="form-group">
+                      <label htmlFor="duracion_estimada">Duración (minutos)</label>
+                      <input
+                        type="number"
+                        id="duracion_estimada"
+                        name="duracion_estimada"
+                        value={routineForm.duracion_estimada}
+                        onChange={handleFormChange}
+                        min="15"
+                        max="180"
+                      />
                     </div>
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="profile-card edit-mode">
-                <div className="coach-card-header">
-                  <h3>Editar Información Personal</h3>
+                  
+                  <div className="form-group">
+                    <label htmlFor="descripcion">Descripción</label>
+                    <textarea
+                      id="descripcion"
+                      name="descripcion"
+                      value={routineForm.descripcion}
+                      onChange={handleFormChange}
+                      placeholder="Describe brevemente esta rutina"
+                      rows="3"
+                    ></textarea>
+                  </div>
                 </div>
                 
-                <div className="edit-form-container">
-                  <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                      <label htmlFor="nombre">Nombre:</label>
-                      <input
-                        type="text"
-                        id="nombre"
-                        name="nombre"
-                        value={formData.nombre}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
+                <div className="exercises-container">
+                  <div className="exercises-list">
+                    <h3>Ejercicios Disponibles</h3>
                     
-                    <div className="form-group">
-                      <label htmlFor="email">Email:</label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                      />
+                    <div className="exercises-grid">
+                      {exercises.map(exercise => (
+                        <div key={exercise.id_ejercicio} className="exercise-card">
+                          <h4>{exercise.nombre}</h4>
+                          <p>{exercise.grupos_musculares}</p>
+                          <button 
+                            className="add-exercise-btn"
+                            onClick={() => addExercise(exercise)}
+                            disabled={selectedExercises.some(ex => ex.id_ejercicio === exercise.id_ejercicio)}
+                          >
+                            Agregar
+                          </button>
+                        </div>
+                      ))}
                     </div>
+                  </div>
+                  
+                  <div className="selected-exercises">
+                    <h3>Ejercicios Seleccionados</h3>
                     
-                    <div className="form-group">
-                      <label htmlFor="telefono">Teléfono:</label>
-                      <input
-                        type="tel"
-                        id="telefono"
-                        name="telefono"
-                        value={formData.telefono}
-                        onChange={handleChange}
-                        placeholder="Ej: 5551234567"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label htmlFor="especialidad">Especialidad:</label>
-                      <input
-                        type="text"
-                        id="especialidad"
-                        name="especialidad"
-                        value={formData.especialidad}
-                        onChange={handleChange}
-                        placeholder="Ej: Entrenamiento funcional, Fuerza, etc."
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label htmlFor="certificaciones">Certificaciones:</label>
-                      <input
-                        type="text"
-                        id="certificaciones"
-                        name="certificaciones"
-                        value={formData.certificaciones}
-                        onChange={handleChange}
-                        placeholder="Ej: ACE, NASM, etc."
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label htmlFor="experiencia">Años de experiencia:</label>
-                      <input
-                        type="text"
-                        id="experiencia"
-                        name="experiencia"
-                        value={formData.experiencia}
-                        onChange={handleChange}
-                        placeholder="Ej: 5 años"
-                      />
-                    </div>
-                    
-                    <div className="form-group full-width">
-                      <label htmlFor="horario_disponible">Horario disponible:</label>
-                      <input
-                        type="text"
-                        id="horario_disponible"
-                        name="horario_disponible"
-                        value={formData.horario_disponible}
-                        onChange={handleChange}
-                        placeholder="Ej: Lunes a Viernes de 9:00 a 17:00"
-                      />
-                    </div>
-                    
-                    <div className="form-group full-width">
-                      <label htmlFor="biografia">Biografía:</label>
-                      <textarea
-                        id="biografia"
-                        name="biografia"
-                        value={formData.biografia}
-                        onChange={handleChange}
-                        rows="5"
-                        placeholder="Escribe una breve descripción sobre ti, tu enfoque de entrenamiento y tu experiencia..."
-                      />
-                    </div>
-                    
-                    <div className="form-buttons">
-                      <button 
-                        type="button" 
-                        className="coach-button secondary" 
-                        onClick={handleCancel}
-                        disabled={isSaving}
-                      >
-                        Cancelar
-                      </button>
-                      <button 
-                        type="submit" 
-                        className="coach-button primary"
-                        disabled={isSaving}
-                      >
-                        {isSaving ? 'Guardando...' : 'Guardar Cambios'}
-                      </button>
-                    </div>
-                  </form>
+                    {selectedExercises.length === 0 ? (
+                      <div className="empty-exercises">
+                        <p>No hay ejercicios seleccionados</p>
+                        <p>Agrega ejercicios de la lista disponible</p>
+                      </div>
+                    ) : (
+                      <div className="selected-exercises-list">
+                        {selectedExercises.map((exercise, index) => (
+                          <div key={exercise.id_ejercicio} className="selected-exercise-item">
+                            <div className="exercise-header">
+                              <div className="exercise-order">{exercise.orden}</div>
+                              <h4>{exercise.nombre}</h4>
+                              <div className="exercise-actions">
+                                <button 
+                                  className="move-btn"
+                                  onClick={() => moveExercise(exercise.id_ejercicio, 'up')}
+                                  disabled={index === 0}
+                                >
+                                  ▲
+                                </button>
+                                <button 
+                                  className="move-btn"
+                                  onClick={() => moveExercise(exercise.id_ejercicio, 'down')}
+                                  disabled={index === selectedExercises.length - 1}
+                                >
+                                  ▼
+                                </button>
+                                <button 
+                                  className="remove-btn"
+                                  onClick={() => removeExercise(exercise.id_ejercicio)}
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            </div>
+                            
+                            <div className="exercise-details">
+                              <div className="detail-row">
+                                <div className="detail-item">
+                                  <label>Series:</label>
+                                  <input
+                                    type="number"
+                                    value={exercise.series}
+                                    onChange={(e) => updateExerciseDetails(
+                                      exercise.id_ejercicio, 
+                                      'series', 
+                                      parseInt(e.target.value)
+                                    )}
+                                    min="1"
+                                    max="10"
+                                  />
+                                </div>
+                                
+                                <div className="detail-item">
+                                  <label>Repeticiones:</label>
+                                  <input
+                                    type="text"
+                                    value={exercise.repeticiones}
+                                    onChange={(e) => updateExerciseDetails(
+                                      exercise.id_ejercicio, 
+                                      'repeticiones', 
+                                      e.target.value
+                                    )}
+                                  />
+                                </div>
+                                
+                                <div className="detail-item">
+                                  <label>Descanso (seg):</label>
+                                  <input
+                                    type="number"
+                                    value={exercise.descanso_segundos}
+                                    onChange={(e) => updateExerciseDetails(
+                                      exercise.id_ejercicio, 
+                                      'descanso_segundos', 
+                                      parseInt(e.target.value)
+                                    )}
+                                    min="0"
+                                    max="300"
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div className="detail-item full-width">
+                                <label>Notas:</label>
+                                <input
+                                  type="text"
+                                  value={exercise.notas || ''}
+                                  onChange={(e) => updateExerciseDetails(
+                                    exercise.id_ejercicio, 
+                                    'notas', 
+                                    e.target.value
+                                  )}
+                                  placeholder="Instrucciones específicas"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="form-actions">
+                  <button 
+                    className="coach-button secondary"
+                    onClick={() => navigate('/coach/dashboard')}
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    className="coach-button primary"
+                    onClick={saveRoutine}
+                    disabled={selectedExercises.length === 0 || !routineForm.nombre.trim()}
+                  >
+                    Guardar Rutina
+                  </button>
                 </div>
               </div>
-            )}
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -148,7 +148,7 @@ const Login = () => {
         
         <div className="auth-links">
           <p>
-            ¿No tienes una cuenta? <Link to="/registro">Regístrate aquí</Link>
+            ¿No tienes una cuenta? <Link to="/register">Regístrate aquí</Link>
           </p>
           <p>
             ¿Olvidaste tu contraseña? <Link to="/recuperar-password">Recuperar contraseña</Link>
