@@ -363,628 +363,6 @@ const CoachDashboard = () => {
     setRoutineSuccess(false);
   };
 
-//   return (
-//     <div className="container">
-//       <div className="sidebar">
-//         <div className="logo">
-//           <div className="logo-circle">
-//             <img src="/logo.png" alt="Logo Gimnasio" className='logo-img' />
-//           </div>
-//         </div>
-
-//         <div className="menu-buttons">
-//           <button className="menu-button active">Dashboard</button>
-//           <button className="menu-button" onClick={() => navigate('/coach/InformacionCoach')}>Rutinas</button>
-//           <button className="menu-button" onClick={() => navigate('/coach/data')}>Mi Perfil</button>
-//           <button className="menu-button" onClick={logout}>Cerrar sesión</button>
-//         </div>
-//       </div>
-
-//       <div className="main-content">
-//         <div className="content-wrapper">
-//           {/* Mensaje de error si existe */}
-//           {error && (
-//             <div className="error-message">
-//               {error}
-//               <button className="error-close" onClick={() => setError(null)}>×</button>
-//             </div>
-//           )}
-
-//           {notification && (
-//             <div className={`notification ${notification.type}`}>
-//               {notification.message}
-//             </div>
-//           )}
-
-//           {loading ? (
-//             <div className="loading-container">
-//               <div className="spinner"></div>
-//               <p>Cargando datos del dashboard...</p>
-//             </div>
-//           ) : (
-//             <>
-//               {/* Header con información del usuario y botón de actualizar */}
-//               <div className="user-card">
-//                 <div className="user-avatar">
-//                   <img src="/src/assets/icons/usuario.png" alt="Avatar" width="50" height="50" />
-//                 </div>
-//                 <div className="user-info">
-//                   <div className="user-name">{user?.name || 'Entrenador'}</div>
-//                   <div className="membership-details">
-//                     <span>Entrenador del Sistema</span>
-//                     <span>Panel de Control</span>
-//                   </div>
-//                 </div>
-//                 <button
-//                   className="refresh-button"
-//                   onClick={refreshData}
-//                   title="Actualizar datos"
-//                 >
-//                   🔄 Actualizar
-//                 </button>
-//               </div>
-
-//               <h1 className="page-title">Dashboard de Entrenador</h1>
-
-//               <div className="dashboard-container">
-//                 {/* Selector de período de tiempo */}
-//                 <div className="stats-timeframe-selector">
-//                   <span>Ver estadísticas comparadas con: </span>
-//                   <div className="timeframe-buttons">
-//                     <button
-//                       className={`timeframe-button ${statsTimeframe === 'week' ? 'active' : ''}`}
-//                       onClick={() => handleStatsTimeframeChange('week')}
-//                     >
-//                       Semana
-//                     </button>
-//                     <button
-//                       className={`timeframe-button ${statsTimeframe === 'month' ? 'active' : ''}`}
-//                       onClick={() => handleStatsTimeframeChange('month')}
-//                     >
-//                       Mes
-//                     </button>
-//                     <button
-//                       className={`timeframe-button ${statsTimeframe === 'year' ? 'active' : ''}`}
-//                       onClick={() => handleStatsTimeframeChange('year')}
-//                     >
-//                       Año
-//                     </button>
-//                   </div>
-//                 </div>
-
-//                 {/* Tarjetas de estadísticas */}
-//                 <div className="stats-grid">
-//                   <div className="stat-card interactive">
-//                     <div className="stat-header">
-//                       <h3>Total Clientes</h3>
-//                       <div className="trend-indicator neutral">
-//                         <span className="trend-arrow">→</span>
-//                         <span className="trend-percent">0%</span>
-//                       </div>
-//                     </div>
-//                     <p className="stat-value">{clients.length}</p>
-//                     <p className="stat-description">
-//                       <span className="stat-comparison">
-//                         0 en el mes anterior
-//                       </span>
-//                       <br />
-//                       Clientes asignados actualmente
-//                     </p>
-//                     <div className="stat-progress-bar">
-//                       <div
-//                         className="progress-fill"
-//                         style={{
-//                           width: '100%'
-//                         }}
-//                       ></div>
-//                     </div>
-//                   </div>
-
-//                   <div className="stat-card interactive">
-//                     <div className="stat-header">
-//                       <h3>Clientes Activos</h3>
-//                       <div className="trend-indicator neutral">
-//                         <span className="trend-arrow">→</span>
-//                         <span className="trend-percent">0%</span>
-//                       </div>
-//                     </div>
-//                     <p className="stat-value">{clients.filter(c => c.activo).length || 0}</p>
-//                     <p className="stat-description">
-//                       <span className="stat-comparison">
-//                         0 en el mes anterior
-//                       </span>
-//                       <br />
-//                       {clients.length > 0 ? Math.round((clients.filter(c => c.activo).length / clients.length) * 100) : 0}% del total de clientes
-//                     </p>
-//                     <div className="stat-progress-bar">
-//                       <div
-//                         className="progress-fill"
-//                         style={{
-//                           width: clients.length > 0 ? `${(clients.filter(c => c.activo).length / clients.length) * 100}%` : '0%'
-//                         }}
-//                       ></div>
-//                     </div>
-//                   </div>
-
-//                   <div className="stat-card interactive">
-//                     <div className="stat-header">
-//                       <h3>Entrenadores</h3>
-//                       <div className="trend-indicator neutral">
-//                         <span className="trend-arrow">→</span>
-//                         <span className="trend-percent">0%</span>
-//                       </div>
-//                     </div>
-//                     <p className="stat-value">1</p>
-//                     <p className="stat-description">
-//                       <span className="stat-comparison">
-//                         0 en el mes anterior
-//                       </span>
-//                       <br />
-//                       Entrenadores en la plataforma
-//                     </p>
-//                     <div className="stat-progress-bar">
-//                       <div
-//                         className="progress-fill"
-//                         style={{
-//                           width: '100%'
-//                         }}
-//                       ></div>
-//                     </div>
-//                   </div>
-
-//                   <div className="stat-card interactive">
-//                     <div className="stat-header">
-//                       <h3>Solicitudes Pendientes</h3>
-//                       <div className="trend-indicator neutral">
-//                         <span className="trend-arrow">→</span>
-//                         <span className="trend-percent">0%</span>
-//                       </div>
-//                     </div>
-//                     <p className="stat-value">{pendingRequests.length}</p>
-//                     <p className="stat-description">
-//                       <span className="stat-comparison">
-//                         0 en el mes anterior
-//                       </span>
-//                       <br />
-//                       Solicitudes en espera de aprobación
-//                     </p>
-//                     <div className="stat-progress-bar">
-//                       <div
-//                         className="progress-fill"
-//                         style={{
-//                           width: pendingRequests.length > 0 ? '100%' : '0%'
-//                         }}
-//                       ></div>
-//                     </div>
-//                   </div>
-//                 </div>
-
-//                 {/* Panel único de Actividad Reciente - SIN la sección de Acciones Rápidas */}
-//                 <div className="admin-card" style={{ marginTop: '30px' }}>
-//                   <div className="card-header-with-actions">
-//                     <h3>Actividad Reciente</h3>
-//                     <div className="activity-filters">
-//                       <select
-//                         className="activity-filter-select"
-//                         value={activeTab}
-//                         onChange={(e) => setActiveTab(e.target.value)}
-//                       >
-//                         <option value="clients">Todos los clientes</option>
-//                         <option value="requests">Solicitudes pendientes</option>
-//                       </select>
-//                     </div>
-//                   </div>
-
-//                   <div className="activity-list">
-//                     {activeTab === 'clients' ? (
-//                       clients.length === 0 ? (
-//                         <div className="empty-activity">
-//                           <p>No hay clientes asignados actualmente.</p>
-//                           <p>Las asignaciones de clientes aparecerán automáticamente cuando un cliente solicite un entrenador.</p>
-//                           <button
-//                             className="secondary-button"
-//                             onClick={refreshData}
-//                             style={{ marginTop: '10px' }}
-//                           >
-//                             Verificar nuevamente
-//                           </button>
-//                         </div>
-//                       ) : (
-//                         clients.map(client => (
-//                           <div key={client.id_usuario} className="activity-item">
-//                             <div className="activity-icon new_user"></div>
-//                             <div className="activity-details">
-//                               <p className="activity-description">{client.nombre}</p>
-//                               <p className="activity-date">Asignado desde: {new Date(client.fecha_asignacion).toLocaleDateString()}</p>
-//                             </div>
-//                             <button
-//                               className="view-details-button"
-//                               onClick={() => handleViewDetails(client)}
-//                             >
-//                               Ver detalles
-//                             </button>
-//                           </div>
-//                         ))
-//                       )
-//                     ) : (
-//                       pendingRequests.length === 0 ? (
-//                         <div className="empty-activity">
-//                           <p>No hay solicitudes pendientes en este momento.</p>
-//                           <p>Las solicitudes aparecerán aquí cuando un cliente solicite tus servicios como entrenador.</p>
-//                           <button
-//                             className="secondary-button"
-//                             onClick={refreshData}
-//                             style={{ marginTop: '10px' }}
-//                           >
-//                             Verificar nuevamente
-//                           </button>
-//                         </div>
-//                       ) : (
-//                         pendingRequests.map(request => (
-//                           <div key={request.id_asignacion} className="activity-item">
-//                             <div className="activity-icon subscription_renewal"></div>
-//                             <div className="activity-details">
-//                               <p className="activity-description">{request.nombre} ha solicitado tus servicios</p>
-//                               <p className="activity-date">Fecha solicitud: {new Date(request.fecha_asignacion).toLocaleDateString()}</p>
-//                             </div>
-//                             <div className="activity-actions">
-//                               <button
-//                                 className="action-button accept"
-//                                 onClick={() => handleAcceptRequest(request.id_asignacion)}
-//                               >
-//                                 Aceptar
-//                               </button>
-//                               <button
-//                                 className="action-button reject"
-//                                 onClick={() => handleRejectRequest(request.id_asignacion)}
-//                               >
-//                                 Rechazar
-//                               </button>
-//                             </div>
-//                           </div>
-//                         ))
-//                       )
-//                     )}
-//                   </div>
-//                 </div>
-//               </div>
-
-//               {/* Modal de detalles del cliente */}
-//               {showClientDetails && selectedClient && (
-//                 <div className="client-details-modal">
-//                   <div className="client-details-content">
-//                     <div className="client-details-header">
-//                       <h2>Detalles del Cliente</h2>
-//                       <button className="close-button close-modal-button" onClick={handleCloseDetails}>×</button>
-//                     </div>
-
-//                     <div className="client-details-body">
-//                       {/* Sección de Información Básica */}
-//                       <div className="client-details-section">
-//                         <h3>Información Básica</h3>
-//                         <div className="client-data-grid">
-//                           <div className="client-data-item">
-//                             <span className="data-label">Nombre:</span>
-//                             <span className="data-value">{selectedClient.nombre || 'No disponible'}</span>
-//                           </div>
-//                           <div className="client-data-item">
-//                             <span className="data-label">Email:</span>
-//                             <span className="data-value">{selectedClient.email || 'No disponible'}</span>
-//                           </div>
-//                           <div className="client-data-item">
-//                             <span className="data-label">Teléfono:</span>
-//                             <span className="data-value">{selectedClient.telefono || 'No registrado'}</span>
-//                           </div>
-//                           <div className="client-data-item">
-//                             <span className="data-label">Fecha de asignación:</span>
-//                             <span className="data-value">
-//                               {selectedClient.fecha_asignacion ? new Date(selectedClient.fecha_asignacion).toLocaleDateString() : 'No disponible'}
-//                             </span>
-//                           </div>
-//                         </div>
-//                       </div>
-
-//                       {/* Sección de Información Física */}
-//                       <div className="client-details-section physical-section">
-//                         <h3>Información Física</h3>
-//                         {loadingMeasurements ? (
-//                           <div className="loading-measurements">
-//                             <div className="spinner small"></div>
-//                             <p>Cargando medidas físicas...</p>
-//                           </div>
-//                         ) : clientMeasurements.length === 0 ? (
-//                           <div className="empty-physical-info">
-//                             <p>No hay información física registrada para este cliente.</p>
-//                             <p>El cliente debe registrar sus medidas físicas.</p>
-//                           </div>
-//                         ) : (
-//                           <>
-//                             {/* Mostrar la medida más reciente */}
-//                             <div className="physical-data">
-//                               <div className="client-data-grid">
-//                                 <div className="client-data-item">
-//                                   <span className="data-label">Altura:</span>
-//                                   <span className="data-value">
-//                                     {clientMeasurements[0].altura ? `${clientMeasurements[0].altura} cm` : '--'}
-//                                   </span>
-//                                 </div>
-//                                 <div className="client-data-item">
-//                                   <span className="data-label">Peso:</span>
-//                                   <span className="data-value">
-//                                     {clientMeasurements[0].peso ? `${clientMeasurements[0].peso} kg` : '--'}
-//                                   </span>
-//                                 </div>
-//                                 <div className="client-data-item">
-//                                   <span className="data-label">IMC:</span>
-//                                   <span className="data-value">
-//                                     {clientMeasurements[0].altura && clientMeasurements[0].peso
-//                                       ? (clientMeasurements[0].peso / Math.pow(clientMeasurements[0].altura / 100, 2)).toFixed(2)
-//                                       : '--'}
-//                                   </span>
-//                                 </div>
-//                                 <div className="client-data-item">
-//                                   <span className="data-label">% Grasa corporal:</span>
-//                                   <span className="data-value">
-//                                     {clientMeasurements[0].porcentaje_grasa ? `${clientMeasurements[0].porcentaje_grasa}%` : '--'}
-//                                   </span>
-//                                 </div>
-//                                 <div className="client-data-item">
-//                                   <span className="data-label">Masa muscular:</span>
-//                                   <span className="data-value">
-//                                     {clientMeasurements[0].masa_muscular ? `${clientMeasurements[0].masa_muscular} kg` : '--'}
-//                                   </span>
-//                                 </div>
-//                                 <div className="client-data-item">
-//                                   <span className="data-label">Medida Pecho:</span>
-//                                   <span className="data-value">
-//                                     {clientMeasurements[0].medida_pecho ? `${clientMeasurements[0].medida_pecho} cm` : '--'}
-//                                   </span>
-//                                 </div>
-//                                 <div className="client-data-item">
-//                                   <span className="data-label">Medida Cintura:</span>
-//                                   <span className="data-value">
-//                                     {clientMeasurements[0].medida_cintura ? `${clientMeasurements[0].medida_cintura} cm` : '--'}
-//                                   </span>
-//                                 </div>
-//                                 <div className="client-data-item">
-//                                   <span className="data-label">Medida Cadera:</span>
-//                                   <span className="data-value">
-//                                     {clientMeasurements[0].medida_cadera ? `${clientMeasurements[0].medida_cadera} cm` : '--'}
-//                                   </span>
-//                                 </div>
-//                                 <div className="client-data-item">
-//                                   <span className="data-label">Última actualización:</span>
-//                                   <span className="data-value">
-//                                     {clientMeasurements[0].fecha_registro
-//                                       ? new Date(clientMeasurements[0].fecha_registro).toLocaleDateString()
-//                                       : '--'}
-//                                   </span>
-//                                 </div>
-//                               </div>
-
-//                               {clientMeasurements[0].notas && (
-//                                 <div className="physical-notes">
-//                                   <span className="data-label">Notas:</span>
-//                                   <p className="data-value notes">{clientMeasurements[0].notas}</p>
-//                                 </div>
-//                               )}
-//                             </div>
-//                           </>
-//                         )}
-//                       </div>
-//                       {/* Formulario para registrar medidas */}
-//                       {registeringMeasurements && (
-//                         <div className="measurements-form-overlay">
-//                           <div className="measurements-form-container">
-//                             <div className="measurements-form-header">
-//                               <h3>Registrar Medidas Físicas</h3>
-//                               <button
-//                                 className="close-button"
-//                                 onClick={() => setRegisteringMeasurements(false)}
-//                               >
-//                                 ×
-//                               </button>
-//                             </div>
-
-//                             <form className="measurements-form">
-//                               <div className="form-grid">
-//                                 <div className="form-group">
-//                                   <label htmlFor="peso">Peso (kg):</label>
-//                                   <input
-//                                     type="number"
-//                                     id="peso"
-//                                     name="peso"
-//                                     value={newMeasurements.peso}
-//                                     onChange={handleMeasurementChange}
-//                                     step="0.1"
-//                                     min="0"
-//                                     placeholder="Ej: 75.5"
-//                                   />
-//                                 </div>
-
-//                                 <div className="form-group">
-//                                   <label htmlFor="altura">Altura (cm):</label>
-//                                   <input
-//                                     type="number"
-//                                     id="altura"
-//                                     name="altura"
-//                                     value={newMeasurements.altura}
-//                                     onChange={handleMeasurementChange}
-//                                     step="0.1"
-//                                     min="0"
-//                                     placeholder="Ej: 175"
-//                                   />
-//                                 </div>
-
-//                                 <div className="form-group">
-//                                   <label htmlFor="porcentaje_grasa">% Grasa Corporal:</label>
-//                                   <input
-//                                     type="number"
-//                                     id="porcentaje_grasa"
-//                                     name="porcentaje_grasa"
-//                                     value={newMeasurements.porcentaje_grasa}
-//                                     onChange={handleMeasurementChange}
-//                                     step="0.1"
-//                                     min="0"
-//                                     max="100"
-//                                     placeholder="Ej: 15.5"
-//                                   />
-//                                 </div>
-
-//                                 <div className="form-group">
-//                                   <label htmlFor="masa_muscular">Masa Muscular (kg):</label>
-//                                   <input
-//                                     type="number"
-//                                     id="masa_muscular"
-//                                     name="masa_muscular"
-//                                     value={newMeasurements.masa_muscular}
-//                                     onChange={handleMeasurementChange}
-//                                     step="0.1"
-//                                     min="0"
-//                                     placeholder="Ej: 35.2"
-//                                   />
-//                                 </div>
-
-//                                 {/* Agregar los demás campos de medidas */}
-//                                 {/* ... */}
-//                               </div>
-
-//                               <div className="form-group full-width">
-//                                 <label htmlFor="notas">Notas:</label>
-//                                 <textarea
-//                                   id="notas"
-//                                   name="notas"
-//                                   value={newMeasurements.notas}
-//                                   onChange={handleMeasurementChange}
-//                                   rows="3"
-//                                   placeholder="Observaciones adicionales sobre las medidas"
-//                                 />
-//                               </div>
-
-//                               <div className="form-buttons">
-//                                 <button
-//                                   type="button"
-//                                   className="cancel-button"
-//                                   onClick={() => setRegisteringMeasurements(false)}
-//                                   disabled={assigningRoutine}
-//                                 >
-//                                   Cancelar
-//                                 </button>
-//                                 <button
-//                                   type="button"
-//                                   className="save-button"
-//                                   onClick={handleRegisterMeasurements}
-//                                   disabled={assigningRoutine}
-//                                 >
-//                                   {assigningRoutine ? 'Guardando...' : 'Guardar Medidas'}
-//                                 </button>
-//                               </div>
-//                             </form>
-//                           </div>
-//                         </div>
-//                       )}
-
-//                       {/* Sección para asignar rutina */}
-//                       <div className="client-details-section">
-//                         <h3>Asignar Rutina</h3>
-//                         <div className="routine-selector">
-//                           <select
-//                             className="routine-select"
-//                             value={selectedRoutine || ''}
-//                             onChange={(e) => setSelectedRoutine(e.target.value)}
-//                             disabled={assigningRoutine}
-//                           >
-//                             <option value="">Selecciona una rutina</option>
-//                             {availableRoutines.map(routine => (
-//                               <option key={routine.id_rutina} value={routine.id_rutina}>
-//                                 {routine.nombre} - {routine.objetivo || 'General'} ({routine.nivel_dificultad || 'intermedio'})
-//                               </option>
-//                             ))}
-//                           </select>
-
-//                           <div className="routine-actions">
-//                             <button
-//                               className="coach-button primary"
-//                               onClick={handleAssignRoutine}
-//                               disabled={!selectedRoutine || assigningRoutine}
-//                             >
-//                               {assigningRoutine ? 'Asignando...' : 'Asignar rutina'}
-//                             </button>
-//                             {/* <button 
-//                               className="coach-button secondary"
-//                               onClick={() => {
-//                                 // Cerrar el modal primero
-//                                 handleCloseDetails();
-//                                 // Luego navegar a la página de creación de rutina para este cliente
-//                                 navigate(`/coach/InformacionCoach/${selectedClient.id_usuario}`);
-//                               }}
-//                             >
-//                               Crear rutina personalizada
-//                             </button> */}
-
-//                             {/* <button 
-//   className="coach-button secondary"
-//   onClick={() => {
-//     // Cerrar el modal primero
-//     handleCloseDetails();
-//     // Navegar a la página de creación de rutina personalizada para este cliente
-//     navigate(`/coach/custom-routine/${selectedClient.id_usuario}`);
-//   }}
-// >
-//   Crear rutina personalizada
-// </button> */}
-//                             <button
-//                               className="coach-button secondary"
-//                               onClick={() => {
-//                                 // Cerrar el modal primero
-//                                 handleCloseDetails();
-//                                 // Navegar a la página de creación de rutina personalizada para este cliente
-//                                 navigate(`/coach/custom-routine/${selectedClient.id_usuario}`);
-//                               }}
-//                             >
-//                               Crear rutina personalizada
-//                             </button>
-//                           </div>
-
-//                           {routineSuccess && (
-//                             <div className="routine-success">
-//                               <p>✅ Rutina asignada correctamente</p>
-//                             </div>
-//                           )}
-//                         </div>
-//                       </div>
-
-//                       {/* Botones de acción */}
-//                       <div className="modal-actions">
-//                         {/* <button className="coach-button secondary">
-//                           Registrar medidas
-//                         </button> */}
-//                         <button
-//                           className="coach-button secondary"
-//                           onClick={() => setRegisteringMeasurements(true)}
-//                         >
-//                           Registrar medidas
-//                         </button>
-//                         <button
-//                           className="coach-button close"
-//                           onClick={handleCloseDetails}
-//                         >
-//                           Cerrar
-//                         </button>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//               )}
-//             </>
-
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
   return (
     <div className="container">
       <div className="sidebar">
@@ -1317,7 +695,7 @@ const CoachDashboard = () => {
                         ) : clientMeasurements.length === 0 ? (
                           <div className="empty-physical-info">
                             <p>No hay información física registrada para este cliente.</p>
-                            <p>El cliente debe registrar sus medidas físicas o puedes registrarlas tú mismo.</p>
+                            <p>El cliente debe registrar sus medidas físicas.</p>
                           </div>
                         ) : (
                           <>
@@ -1394,7 +772,6 @@ const CoachDashboard = () => {
                           </>
                         )}
                       </div>
-                      
                       {/* Formulario para registrar medidas */}
                       {registeringMeasurements && (
                         <div className="measurements-form-overlay">
@@ -1408,195 +785,101 @@ const CoachDashboard = () => {
                                 ×
                               </button>
                             </div>
-<form className="measurements-form">
-  <div className="form-grid">
-    <div className="form-group">
-      <label htmlFor="peso">Peso (kg):</label>
-      <input
-        type="number"
-        id="peso"
-        name="peso"
-        value={newMeasurements.peso}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 75.5"
-      />
-    </div>
 
-    <div className="form-group">
-      <label htmlFor="altura">Altura (cm):</label>
-      <input
-        type="number"
-        id="altura"
-        name="altura"
-        value={newMeasurements.altura}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 175"
-      />
-    </div>
+                            <form className="measurements-form">
+                              <div className="form-grid">
+                                <div className="form-group">
+                                  <label htmlFor="peso">Peso (kg):</label>
+                                  <input
+                                    type="number"
+                                    id="peso"
+                                    name="peso"
+                                    value={newMeasurements.peso}
+                                    onChange={handleMeasurementChange}
+                                    step="0.1"
+                                    min="0"
+                                    placeholder="Ej: 75.5"
+                                  />
+                                </div>
 
-    <div className="form-group">
-      <label htmlFor="porcentaje_grasa">% Grasa Corporal:</label>
-      <input
-        type="number"
-        id="porcentaje_grasa"
-        name="porcentaje_grasa"
-        value={newMeasurements.porcentaje_grasa}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        max="100"
-        placeholder="Ej: 15.5"
-      />
-    </div>
+                                <div className="form-group">
+                                  <label htmlFor="altura">Altura (cm):</label>
+                                  <input
+                                    type="number"
+                                    id="altura"
+                                    name="altura"
+                                    value={newMeasurements.altura}
+                                    onChange={handleMeasurementChange}
+                                    step="0.1"
+                                    min="0"
+                                    placeholder="Ej: 175"
+                                  />
+                                </div>
 
-    <div className="form-group">
-      <label htmlFor="masa_muscular">Masa Muscular (kg):</label>
-      <input
-        type="number"
-        id="masa_muscular"
-        name="masa_muscular"
-        value={newMeasurements.masa_muscular}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 35.2"
-      />
-    </div>
+                                <div className="form-group">
+                                  <label htmlFor="porcentaje_grasa">% Grasa Corporal:</label>
+                                  <input
+                                    type="number"
+                                    id="porcentaje_grasa"
+                                    name="porcentaje_grasa"
+                                    value={newMeasurements.porcentaje_grasa}
+                                    onChange={handleMeasurementChange}
+                                    step="0.1"
+                                    min="0"
+                                    max="100"
+                                    placeholder="Ej: 15.5"
+                                  />
+                                </div>
 
-    <div className="form-group">
-      <label htmlFor="medida_pecho">Medida Pecho (cm):</label>
-      <input
-        type="number"
-        id="medida_pecho"
-        name="medida_pecho"
-        value={newMeasurements.medida_pecho}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 95"
-      />
-    </div>
+                                <div className="form-group">
+                                  <label htmlFor="masa_muscular">Masa Muscular (kg):</label>
+                                  <input
+                                    type="number"
+                                    id="masa_muscular"
+                                    name="masa_muscular"
+                                    value={newMeasurements.masa_muscular}
+                                    onChange={handleMeasurementChange}
+                                    step="0.1"
+                                    min="0"
+                                    placeholder="Ej: 35.2"
+                                  />
+                                </div>
 
-    <div className="form-group">
-      <label htmlFor="medida_brazo_izq">Brazo Izquierdo (cm):</label>
-      <input
-        type="number"
-        id="medida_brazo_izq"
-        name="medida_brazo_izq"
-        value={newMeasurements.medida_brazo_izq}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 32"
-      />
-    </div>
+                                {/* Agregar los demás campos de medidas */}
+                                {/* ... */}
+                              </div>
 
-    <div className="form-group">
-      <label htmlFor="medida_brazo_der">Brazo Derecho (cm):</label>
-      <input
-        type="number"
-        id="medida_brazo_der"
-        name="medida_brazo_der"
-        value={newMeasurements.medida_brazo_der}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 33"
-      />
-    </div>
+                              <div className="form-group full-width">
+                                <label htmlFor="notas">Notas:</label>
+                                <textarea
+                                  id="notas"
+                                  name="notas"
+                                  value={newMeasurements.notas}
+                                  onChange={handleMeasurementChange}
+                                  rows="3"
+                                  placeholder="Observaciones adicionales sobre las medidas"
+                                />
+                              </div>
 
-    <div className="form-group">
-      <label htmlFor="medida_pierna_izq">Pierna Izquierda (cm):</label>
-      <input
-        type="number"
-        id="medida_pierna_izq"
-        name="medida_pierna_izq"
-        value={newMeasurements.medida_pierna_izq}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 55"
-      />
-    </div>
-
-    <div className="form-group">
-      <label htmlFor="medida_pierna_der">Pierna Derecha (cm):</label>
-      <input
-        type="number"
-        id="medida_pierna_der"
-        name="medida_pierna_der"
-        value={newMeasurements.medida_pierna_der}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 56"
-      />
-    </div>
-
-    <div className="form-group">
-      <label htmlFor="medida_cintura">Cintura (cm):</label>
-      <input
-        type="number"
-        id="medida_cintura"
-        name="medida_cintura"
-        value={newMeasurements.medida_cintura}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 85"
-      />
-    </div>
-
-    <div className="form-group">
-      <label htmlFor="medida_cadera">Cadera (cm):</label>
-      <input
-        type="number"
-        id="medida_cadera"
-        name="medida_cadera"
-        value={newMeasurements.medida_cadera}
-        onChange={handleMeasurementChange}
-        step="0.1"
-        min="0"
-        placeholder="Ej: 90"
-      />
-    </div>
-  </div>
-
-  <div className="form-group full-width">
-    <label htmlFor="notas">Notas:</label>
-    <textarea
-      id="notas"
-      name="notas"
-      value={newMeasurements.notas}
-      onChange={handleMeasurementChange}
-      rows="3"
-      placeholder="Observaciones adicionales sobre las medidas"
-    />
-  </div>
-
-  <div className="form-buttons">
-    <button
-      type="button"
-      className="cancel-button"
-      onClick={() => setRegisteringMeasurements(false)}
-      disabled={assigningRoutine}
-    >
-      Cancelar
-    </button>
-    <button
-      type="button"
-      className="save-button"
-      onClick={handleRegisterMeasurements}
-      disabled={assigningRoutine}
-    >
-      {assigningRoutine ? 'Guardando...' : 'Guardar Medidas'}
-    </button>
-  </div>
-</form>
+                              <div className="form-buttons">
+                                <button
+                                  type="button"
+                                  className="cancel-button"
+                                  onClick={() => setRegisteringMeasurements(false)}
+                                  disabled={assigningRoutine}
+                                >
+                                  Cancelar
+                                </button>
+                                <button
+                                  type="button"
+                                  className="save-button"
+                                  onClick={handleRegisterMeasurements}
+                                  disabled={assigningRoutine}
+                                >
+                                  {assigningRoutine ? 'Guardando...' : 'Guardar Medidas'}
+                                </button>
+                              </div>
+                            </form>
                           </div>
                         </div>
                       )}
@@ -1627,6 +910,29 @@ const CoachDashboard = () => {
                             >
                               {assigningRoutine ? 'Asignando...' : 'Asignar rutina'}
                             </button>
+                            {/* <button 
+                              className="coach-button secondary"
+                              onClick={() => {
+                                // Cerrar el modal primero
+                                handleCloseDetails();
+                                // Luego navegar a la página de creación de rutina para este cliente
+                                navigate(`/coach/InformacionCoach/${selectedClient.id_usuario}`);
+                              }}
+                            >
+                              Crear rutina personalizada
+                            </button> */}
+
+                            {/* <button 
+  className="coach-button secondary"
+  onClick={() => {
+    // Cerrar el modal primero
+    handleCloseDetails();
+    // Navegar a la página de creación de rutina personalizada para este cliente
+    navigate(`/coach/custom-routine/${selectedClient.id_usuario}`);
+  }}
+>
+  Crear rutina personalizada
+</button> */}
                             <button
                               className="coach-button secondary"
                               onClick={() => {
@@ -1650,12 +956,9 @@ const CoachDashboard = () => {
 
                       {/* Botones de acción */}
                       <div className="modal-actions">
-                        <button
-                          className="coach-button secondary"
-                          onClick={() => setRegisteringMeasurements(true)}
-                        >
+                        {/* <button className="coach-button secondary">
                           Registrar medidas
-                        </button>
+                        </button> */}
                         <button
                           className="coach-button close"
                           onClick={handleCloseDetails}
@@ -1668,6 +971,7 @@ const CoachDashboard = () => {
                 </div>
               )}
             </>
+
           )}
         </div>
       </div>
