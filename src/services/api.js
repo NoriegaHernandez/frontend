@@ -1359,6 +1359,22 @@ deleteRoutine: async (routineId) => {
     throw error;
   }
 },
+// Actualizar los ejercicios de una rutina
+updateRoutineExercises: async (routineId, exercisesData) => {
+  try {
+    console.log(`Actualizando ejercicios para rutina ${routineId}`);
+    console.log(`Total de ejercicios: ${exercisesData.length}`);
+    
+    const response = await axiosInstance.put(`/coach/routine/${routineId}/exercises`, { 
+      exercises: exercisesData 
+    });
+    
+    return response;
+  } catch (error) {
+    console.error('Error al actualizar ejercicios de rutina:', error);
+    throw error;
+  }
+},
 requestCoach: async (coachId) => {
   try {
     console.log(`Enviando solicitud para el entrenador ID: ${coachId}`);

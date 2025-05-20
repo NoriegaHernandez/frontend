@@ -492,12 +492,18 @@ const RoutineDetails = () => {
               <div className="exercises-section">
                 <div className="section-header">
                   <h2>Ejercicios ({exercises.length})</h2>
-                  <button
+                  {/* <button
                     className="edit-exercises-button"
                     onClick={() => navigate(`/coach/routine/${routineId}/edit-exercises`)}
                   >
                     Editar Ejercicios
-                  </button>
+                  </button> */}
+                  <button
+  className="edit-exercises-button"
+  onClick={() => navigate(`/coach/routine/${routineId}/edit-exercises`)}
+>
+  Editar Ejercicios
+</button>
                 </div>
                 
                 {exercises.length === 0 ? (

@@ -260,7 +260,6 @@ const handleViewRoutine = (routineId) => {
                                                     Ver detalles
                                                 </button> */}
 
-                                                // Make sure the button in each routine card calls this function:
                                                 <button
                                                     className="view-button"
                                                     onClick={() => handleViewRoutine(routine.id_rutina)}
