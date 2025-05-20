@@ -41,17 +41,17 @@ import RoutineView from './pages/cliente/RoutineView'
 // Componente para verificar el rol del usuario y redirigir
 const RoleRoute = ({ allowedRoles, children }) => {
   const userType = localStorage.getItem('userType');
-  
+
   if (!userType) {
     return <Navigate to="/login" replace />;
   }
-  
+
   if (allowedRoles.includes(userType)) {
     return children;
   }
-  
+
   // Redirigir según el rol
-  switch(userType) {
+  switch (userType) {
     case 'cliente':
       return <Navigate to="/cliente/dashboard" replace />;
     case 'coach':
@@ -73,7 +73,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             localStorage.getItem('token') ? (
               (() => {
                 const userType = localStorage.getItem('userType');
-                switch(userType) {
+                switch (userType) {
                   case 'cliente':
                     return <Navigate to="/cliente/dashboard" replace />;
                   case 'coach':
@@ -88,15 +88,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Navigate to="/login" replace />
             )
           } />
-          
+
           {/* Rutas de autenticación */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          
+
           {/* Rutas para recuperación de contraseña */}
           <Route path="/recuperar-password" element={<ForgotPassword />} />
           <Route path="/restablecer-password/:token" element={<ResetPassword />} />
-          
+
           {/* Rutas del cliente */}
           <Route path="/cliente/dashboard" element={
             <RoleRoute allowedRoles={['cliente']}>
@@ -113,7 +113,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Informacion />
             </RoleRoute>
           } />
-          
+
           <Route path="/cliente/membresia" element={
             <RoleRoute allowedRoles={['cliente']}>
               <Membresia />
@@ -138,13 +138,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Entrenadores />
             </RoleRoute>
           } />
-          
+
           {/* Rutas del coach */}
           <Route path="/coach/dashboard" element={
             <RoleRoute allowedRoles={['coach']}>
               <CoachDashboard />
             </RoleRoute>
-            
+
           } />
           <Route path="/coach/InformacionCoach/:clientId" element={
             <RoleRoute allowedRoles={['coach']}>
@@ -168,22 +168,49 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             </RoleRoute>
           } />
 
-          {/* Ruta para CustomRoutine - AGREGADA */}
+          {/* Ruta para CustomRoutine - AGREGADA
           <Route path="/coach/custom-routine/:clienteId" element={
             <RoleRoute allowedRoles={['coach']}>
               <CustomRoutine />
-            </RoleRoute>}/>
+            </RoleRoute>}/> */}
+          <Route path="/coach/custom-routine/:clienteId" element={
+            <RoleRoute allowedRoles={['coach']}>
+              <CustomRoutine />
+            </RoleRoute>} />
 
-          <Route path="/coach/custom-routine/:new" element={
+          {/* <Route path="/coach/custom-routine/:new" element={
             <RoleRoute allowedRoles={['coach']}>
               <CustomRoutineForm />
-            </RoleRoute>}/>
-            
-          <Route path="/coach/custom-routine/:clientId" element={
+            </RoleRoute>} /> */}
+            <Route path="/coach/custom-routine/:new" element={
+  <RoleRoute allowedRoles={['coach']}>
+    <CustomRoutineForm />
+  </RoleRoute>}/>
+
+          {/* <Route path="/coach/custom-routine/:clientId" element={
             <RoleRoute allowedRoles={['coach']}>
               <CustomRoutineForm />
-            </RoleRoute>}/> 
+            </RoleRoute>} /> */}
 
+            {/* Rutas para gestión de rutinas */}
+<Route path="/coach/routines" element={
+  <RoleRoute allowedRoles={['coach']}>
+    <RoutinesManagement />
+  </RoleRoute>
+}/>
+
+{/* Ruta para crear nueva rutina */}
+<Route path="/coach/custom-routine/new" element={
+  <RoleRoute allowedRoles={['coach']}>
+    <CustomRoutineForm />
+  </RoleRoute>
+}/>
+
+
+<Route path="/coach/custom-routine/:clientId" element={
+  <RoleRoute allowedRoles={['coach']}>
+    <CustomRoutineForm />
+  </RoleRoute>}/> 
 
           {/* Rutas del administrador */}
           <Route path="/admin/dashboard" element={
@@ -197,21 +224,21 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             </RoleRoute>
           } />
           <Route path="/admin/dashboard" element={
-                <RoleRoute allowedRoles={['administrador']}>
-                  <AdminDashboard />
-                </RoleRoute>
-              } />
-              <Route path="/admin/coaches" element={
-                <RoleRoute allowedRoles={['administrador']}>
-                  <GestionCoaches />
-                </RoleRoute>
-              } />
-              <Route path="/admin/usuarios" element={
-                <RoleRoute allowedRoles={['administrador']}>
-                  <GestionUsuarios />
-                </RoleRoute>
-              } />
-          
+            <RoleRoute allowedRoles={['administrador']}>
+              <AdminDashboard />
+            </RoleRoute>
+          } />
+          <Route path="/admin/coaches" element={
+            <RoleRoute allowedRoles={['administrador']}>
+              <GestionCoaches />
+            </RoleRoute>
+          } />
+          <Route path="/admin/usuarios" element={
+            <RoleRoute allowedRoles={['administrador']}>
+              <GestionUsuarios />
+            </RoleRoute>
+          } />
+
           {/* Rutas adicionales como términos y privacidad */}
           <Route path="/terminos" element={<div>Términos de Servicio</div>} />
           <Route path="/privacidad" element={<div>Política de Privacidad</div>} />
