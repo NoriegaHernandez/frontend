@@ -1687,17 +1687,41 @@ getRoutineTrainingDays: async (assignmentId) => {
 },
 
 
-getClientActiveRoutine: async () => {
-  try {
-    console.log('Obteniendo rutina activa del cliente');
-    const response = await axiosInstance.get('/client/active-routine');
-    return response.data;
-  } catch (error) {
-    console.error('Error en getClientActiveRoutine:', error);
-    throw error;
-  }
+// getClientActiveRoutine: async () => {
+//   try {
+//     console.log('Obteniendo rutina activa del cliente');
+//     const response = await axiosInstance.get('/client/active-routine');
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error en getClientActiveRoutine:', error);
+//     throw error;
+//   }
+// },
+
+// En api.js
+getClientActiveRoutine: async (day) => {
+    try {
+        let url = '/client/active-routine';
+        if (day) {
+            url += `?day=${day}`;
+        }
+        const response = await axiosInstance.get(url);
+        return response;
+    } catch (error) {
+        console.error('Error al obtener rutina activa:', error);
+        return { data: null };
+    }
 },
 
+getClientRoutines: async () => {
+    try {
+        const response = await axiosInstance.get('/client/routines');
+        return response;
+    } catch (error) {
+        console.error('Error al obtener rutinas del cliente:', error);
+        return { data: [] };
+    }
+},
 
 getRoutineExercises: async (routineId) => {
   try {
