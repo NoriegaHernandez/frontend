@@ -25,6 +25,8 @@ import CoachDashboard from './pages/coach/Dashboard';
 import InformacionCoach from './pages/coach/InformacionCoach';
 import PerfilCoach from './pages/coach/PerfilCoach';
 import CustomRoutine from './pages/coach/CustomRoutine'; // I
+import CustomRoutineForm from './pages/coach/CustomRoutineForm'; // Importado correctamente
+
 
 
 // Páginas de administrador
@@ -74,6 +76,9 @@ function App() {
             <Route path="/coach/perfil" element={<InformacionCoach />} />
             <Route path="/coach/data" element={<PerfilCoach />} />
              <Route path="/coach/custom-routine/:clientId" element={<CustomRoutine />} />
+            <Route path="/coach/custom-routine/:new" element={<CustomRoutineForm />}/>
+                         
+
           </Route>
           
           {/* Rutas protegidas para administradores */}
