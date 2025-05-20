@@ -1610,41 +1610,69 @@ getExercises: async () => {
 //     throw error;
 //   }
 // },
-assignRoutineToClientWithDays: async (clientId, routineId, trainingDays, startDate = null, endDate = null) => {
+// assignRoutineToClientWithDays: async (clientId, routineId, trainingDays, startDate = null, endDate = null) => {
+//   try {
+//     // Asegurarse que clientId y routineId sean números
+//     const numClientId = parseInt(clientId);
+//     const numRoutineId = parseInt(routineId);
+    
+//     if (isNaN(numClientId) || isNaN(numRoutineId)) {
+//       throw new Error('ID de cliente o rutina no válido');
+//     }
+    
+//     // Verificar que trainingDays sea un array y no esté vacío
+//     if (!Array.isArray(trainingDays) || trainingDays.length === 0) {
+//       throw new Error('Debe seleccionar al menos un día de entrenamiento');
+//     }
+    
+//     console.log('Enviando petición con datos:', { 
+//       clientId: numClientId, 
+//       routineId: numRoutineId, 
+//       trainingDays, 
+//       startDate, 
+//       endDate 
+//     });
+    
+//     const response = await axiosInstance.post('/coach/assign-routine-with-days', {
+//       clientId: numClientId,
+//       routineId: numRoutineId,
+//       trainingDays,
+//       startDate,
+//       endDate
+//     });
+    
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error en assignRoutineToClientWithDays:', error);
+//     throw error;
+//   }
+// },
+
+// Modificar la función de asignación de rutina en api.js
+assignRoutineToClientWithDays: async (clientId, routineId, daysArray) => {
   try {
-    // Asegurarse que clientId y routineId sean números
-    const numClientId = parseInt(clientId);
-    const numRoutineId = parseInt(routineId);
-    
-    if (isNaN(numClientId) || isNaN(numRoutineId)) {
-      throw new Error('ID de cliente o rutina no válido');
-    }
-    
-    // Verificar que trainingDays sea un array y no esté vacío
-    if (!Array.isArray(trainingDays) || trainingDays.length === 0) {
-      throw new Error('Debe seleccionar al menos un día de entrenamiento');
-    }
-    
-    console.log('Enviando petición con datos:', { 
-      clientId: numClientId, 
-      routineId: numRoutineId, 
-      trainingDays, 
-      startDate, 
-      endDate 
+    console.log(`Asignando rutina ${routineId} al cliente ${clientId} para los días:`, daysArray);
+    const response = await axiosInstance.post('/coach/assign-routine', {
+      id_cliente: clientId,
+      id_rutina: routineId,
+      dias_entrenamiento: daysArray
     });
-    
-    const response = await axiosInstance.post('/coach/assign-routine-with-days', {
-      clientId: numClientId,
-      routineId: numRoutineId,
-      trainingDays,
-      startDate,
-      endDate
-    });
-    
-    return response.data;
+    return response;
   } catch (error) {
-    console.error('Error en assignRoutineToClientWithDays:', error);
+    console.error('Error al asignar rutina con días:', error);
     throw error;
+  }
+},
+// En api.js
+getAssignmentDays: async (assignmentId) => {
+  try {
+    console.log(`Solicitando días de entrenamiento para asignación ${assignmentId}`);
+    const response = await axiosInstance.get(`/coach/assignment/${assignmentId}/days`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener días de entrenamiento:', error);
+    // Si hay error, devolver array vacío
+    return { data: [] };
   }
 },
 getRoutineTrainingDays: async (assignmentId) => {

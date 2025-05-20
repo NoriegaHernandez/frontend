@@ -52,6 +52,35 @@ const RoutineDetails = () => {
           throw new Error('No se pudieron cargar los detalles de la rutina');
         }
 
+        // Cargar clientes que ya tienen asignada esta rutina
+        try {
+          const assignedResponse = await api.getRoutineAssignments(routineId);
+          if (assignedResponse.data) {
+            // Obtener los días de entrenamiento para cada asignación
+            const clientsWithDays = await Promise.all(
+              assignedResponse.data.map(async (client) => {
+                try {
+                  const daysResponse = await api.getAssignmentDays(client.id_asignacion_rutina);
+                  return {
+                    ...client,
+                    dias_entrenamiento: daysResponse.data || []
+                  };
+                } catch (err) {
+                  console.warn(`No se pudieron cargar los días para el cliente ${client.id_usuario}:`, err);
+                  return {
+                    ...client,
+                    dias_entrenamiento: []
+                  };
+                }
+              })
+            );
+
+            setAssignedClients(clientsWithDays);
+          }
+        } catch (err) {
+          console.warn('No se pudieron cargar las asignaciones:', err);
+          setAssignedClients([]);
+        }
         setRoutine(routineResponse.data);
 
         // Inicializar datos de edición
@@ -571,6 +600,19 @@ const RoutineDetails = () => {
                   <h2>Clientes Asignados ({assignedClients.length})</h2>
                 </div>
 
+                {/* {assignedClients.length === 0 ? (
+                  <div className="empty-message">
+                    <p>Esta rutina no está asignada a ningún cliente.</p>
+                    {availableClients.length > 0 && (
+                      <button
+                        className="action-button"
+                        onClick={() => setShowAssignModal(true)}
+                      >
+                        Asignar a Cliente
+                      </button>
+                    )}
+                  </div>
+                ) : ( */}
                 {assignedClients.length === 0 ? (
                   <div className="empty-message">
                     <p>Esta rutina no está asignada a ningún cliente.</p>
@@ -584,6 +626,18 @@ const RoutineDetails = () => {
                     )}
                   </div>
                 ) : (
+                  // <div className="clients-list">
+                  //   {assignedClients.map((client) => (
+                  //     <div key={client.id_usuario} className="client-card">
+                  //       <div className="client-info">
+                  //         <h3 className="client-name">{client.nombre}</h3>
+                  //         <p className="client-email">{client.email}</p>
+                  //       </div>
+
+                  //       <div className="assignment-info">
+                  //         <span className="assignment-date">
+                  //           Asignada: {new Date(client.fecha_asignacion).toLocaleDateString()}
+                  //         </span>
                   <div className="clients-list">
                     {assignedClients.map((client) => (
                       <div key={client.id_usuario} className="client-card">
@@ -596,15 +650,21 @@ const RoutineDetails = () => {
                           <span className="assignment-date">
                             Asignada: {new Date(client.fecha_asignacion).toLocaleDateString()}
                           </span>
-
-                          <div className="client-actions">
-                            <button
-                              className="view-client-button"
-                              onClick={() => navigate(`/coach/client/${client.id_usuario}`)}
-                            >
-                              Ver Perfil
-                            </button>
-                          </div>
+                          {/* Mostrar días de entrenamiento */}
+                          {client.dias_entrenamiento && client.dias_entrenamiento.length > 0 && (
+                            <div className="training-days">
+                              <span className="days-label">Días:</span>
+                              <span className="days-value">
+                                {client.dias_entrenamiento
+                                  .map(day => day.dia_semana)
+                                  .sort((a, b) => {
+                                    const order = { 'lunes': 1, 'martes': 2, 'miércoles': 3, 'jueves': 4, 'viernes': 5, 'sábado': 6, 'domingo': 7 };
+                                    return order[a] - order[b];
+                                  })
+                                  .join(', ')}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
