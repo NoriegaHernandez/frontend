@@ -22,9 +22,8 @@ import CoachPerfil from './pages/coach/InformacionCoach'
 import PerfilCoach from './pages/coach/PerfilCoach'
 import CustomRoutine from './pages/coach/CustomRoutine'; // Importado correctamente
 import RoutinesManagement from './pages/coach/RoutinesManagement';
-// import CustomRoutineForm from './pages/coach/CustomRoutineForm';
-
-import CustomRoutineForm from './pages/coach/CustomRoutineForm'; // Importado correctamente
+import CustomRoutineForm from './pages/coach/CustomRoutineForm'; 
+import RoutineDetails from './pages/coach/RoutineDetails'
 
 // Páginas del administrador
 import AdminDashboard from './pages/admin/Dashboard'
@@ -138,6 +137,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Entrenadores />
             </RoleRoute>
           } />
+
+<Route path="/coach/routine/:routineId" element={
+  <RoleRoute allowedRoles={['coach']}>
+    <RoutineDetails />
+  </RoleRoute>
+} />
+
+<Route path="/coach/routines" element={
+  <RoleRoute allowedRoles={['coach']}>
+    <RoutinesManagement />
+  </RoleRoute>
+} />
 
           {/* Rutas del coach */}
           <Route path="/coach/dashboard" element={

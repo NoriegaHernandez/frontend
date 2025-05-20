@@ -52,78 +52,81 @@ const RoutinesManagement = () => {
     );
 
 
-   // Update this function in RoutinesManagement.jsx
-const handleAssignRoutine = async () => {
-    if (!selectedClientId || !selectedRoutineId) {
-        setNotification({
-            type: 'error',
-            message: 'Debes seleccionar un cliente y una rutina'
-        });
-        return;
-    }
-
-    try {
-        setAssigningRoutine(true);
-
-        // Log values for debugging
-        console.log('Selección de cliente:', {
-            selectedClientId: selectedClientId,
-            tipo: typeof selectedClientId
-        });
-        console.log('Selección de rutina:', {
-            selectedRoutineId: selectedRoutineId,
-            tipo: typeof selectedRoutineId
-        });
-
-        // Asegurarnos de que los valores son números, si es necesario
-        const clientId = parseInt(selectedClientId);
-        const routineId = parseInt(selectedRoutineId);
-
-        console.log("Valores convertidos a enviar:");
-        console.log("clientId:", clientId, typeof clientId);
-        console.log("routineId:", routineId, typeof routineId);
-
-        // Verificar que los valores son números válidos
-        if (isNaN(clientId) || isNaN(routineId)) {
-            throw new Error('ID de cliente o rutina no válido');
+    // Update this function in RoutinesManagement.jsx
+    const handleAssignRoutine = async () => {
+        if (!selectedClientId || !selectedRoutineId) {
+            setNotification({
+                type: 'error',
+                message: 'Debes seleccionar un cliente y una rutina'
+            });
+            return;
         }
 
-        await api.assignRoutineToClient(clientId, routineId);
+        try {
+            setAssigningRoutine(true);
 
-        setNotification({
-            type: 'success',
-            message: 'Rutina asignada correctamente'
-        });
+            // Log values for debugging
+            console.log('Selección de cliente:', {
+                selectedClientId: selectedClientId,
+                tipo: typeof selectedClientId
+            });
+            console.log('Selección de rutina:', {
+                selectedRoutineId: selectedRoutineId,
+                tipo: typeof selectedRoutineId
+            });
 
-        // Limpiar selección y cerrar modal
-        setSelectedClientId('');
-        setSelectedRoutineId('');
-        setShowAssignModal(false);
+            // Asegurarnos de que los valores son números, si es necesario
+            const clientId = parseInt(selectedClientId);
+            const routineId = parseInt(selectedRoutineId);
 
-        setTimeout(() => {
-            setNotification(null);
-        }, 3000);
-    } catch (error) {
-        console.error('Error al asignar rutina:', error);
+            console.log("Valores convertidos a enviar:");
+            console.log("clientId:", clientId, typeof clientId);
+            console.log("routineId:", routineId, typeof routineId);
 
-        // Extraer detalles del error para mejor diagnóstico
-        console.error('Mensaje de error:', error.response?.data?.message || error.message);
-        console.error('Datos de la respuesta:', error.response?.data);
+            // Verificar que los valores son números válidos
+            if (isNaN(clientId) || isNaN(routineId)) {
+                throw new Error('ID de cliente o rutina no válido');
+            }
 
-        setNotification({
-            type: 'error',
-            message: 'Error al asignar rutina: ' + (error.response?.data?.message || error.message)
-        });
-    } finally {
-        setAssigningRoutine(false);
-    }
-};
+            await api.assignRoutineToClient(clientId, routineId);
 
-    // Ver detalles de rutina
-    const handleViewRoutine = (routineId) => {
-        navigate(`/coach/routine/${routineId}`);
+            setNotification({
+                type: 'success',
+                message: 'Rutina asignada correctamente'
+            });
+
+            // Limpiar selección y cerrar modal
+            setSelectedClientId('');
+            setSelectedRoutineId('');
+            setShowAssignModal(false);
+
+            setTimeout(() => {
+                setNotification(null);
+            }, 3000);
+        } catch (error) {
+            console.error('Error al asignar rutina:', error);
+
+            // Extraer detalles del error para mejor diagnóstico
+            console.error('Mensaje de error:', error.response?.data?.message || error.message);
+            console.error('Datos de la respuesta:', error.response?.data);
+
+            setNotification({
+                type: 'error',
+                message: 'Error al asignar rutina: ' + (error.response?.data?.message || error.message)
+            });
+        } finally {
+            setAssigningRoutine(false);
+        }
     };
 
+    // // Ver detalles de rutina
+    // const handleViewRoutine = (routineId) => {
+    //     navigate(`/coach/routine/${routineId}`);
+    // };
+// Replace this function:
+const handleViewRoutine = (routineId) => {
+  navigate(`/coach/routine/${routineId}`);
+};
     return (
         <div className="container">
             <div className="sidebar">
@@ -164,12 +167,12 @@ const handleAssignRoutine = async () => {
                             </p>
                         </div>
                         <div className="header-actions">
-<button 
+                            {/* <button 
   className="create-routine-button" 
   onClick={() => navigate('/coach/custom-routine/new')}
 >
   Crear Nueva Rutina
-</button>
+</button> */}
 
                             <button
                                 className="assign-button"
@@ -250,6 +253,14 @@ const handleAssignRoutine = async () => {
                                             </div>
 
                                             <div className="routine-card-footer">
+                                                {/* <button
+                                                    className="view-button"
+                                                    onClick={() => handleViewRoutine(routine.id_rutina)}
+                                                >
+                                                    Ver detalles
+                                                </button> */}
+
+                                                // Make sure the button in each routine card calls this function:
                                                 <button
                                                     className="view-button"
                                                     onClick={() => handleViewRoutine(routine.id_rutina)}

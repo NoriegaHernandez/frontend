@@ -1311,6 +1311,53 @@ cancelClientMembership: async (id_suscripcion) => {
     console.error('Error al cancelar membresía:', error);
     throw error;
   }
+},// Obtener detalles de una rutina específica
+getRoutineDetails: async (routineId) => {
+  try {
+    console.log(`Solicitando detalles de rutina ${routineId}`);
+    const response = await axiosInstance.get(`/coach/routine/${routineId}`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener detalles de rutina:', error);
+    throw error;
+  }
+},
+
+// Obtener asignaciones de una rutina (clientes que tienen asignada esta rutina)
+getRoutineAssignments: async (routineId) => {
+  try {
+    console.log(`Solicitando asignaciones para rutina ${routineId}`);
+    const response = await axiosInstance.get(`/coach/routine/${routineId}/assignments`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener asignaciones de rutina:', error);
+    // Si el endpoint no existe, devolver un array vacío
+    return { data: [] };
+  }
+},
+
+// Actualizar información de una rutina
+updateRoutine: async (routineId, routineData) => {
+  try {
+    console.log(`Actualizando rutina ${routineId} con datos:`, routineData);
+    const response = await axiosInstance.put(`/coach/routine/${routineId}`, routineData);
+    return response;
+  } catch (error) {
+    console.error('Error al actualizar rutina:', error);
+    throw error;
+  }
+},
+
+// Eliminar una rutina
+deleteRoutine: async (routineId) => {
+  try {
+    console.log(`Eliminando rutina ${routineId}`);
+    const response = await axiosInstance.delete(`/coach/routine/${routineId}`);
+    return response;
+  } catch (error) {
+    console.error('Error al eliminar rutina:', error);
+    throw error;
+  }
 },
 requestCoach: async (coachId) => {
   try {
