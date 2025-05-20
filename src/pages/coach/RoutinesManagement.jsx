@@ -125,10 +125,10 @@ const RoutinesManagement = () => {
     // const handleViewRoutine = (routineId) => {
     //     navigate(`/coach/routine/${routineId}`);
     // };
-// Replace this function:
-const handleViewRoutine = (routineId) => {
-  navigate(`/coach/routine/${routineId}`);
-};
+    // Replace this function:
+    const handleViewRoutine = (routineId) => {
+        navigate(`/coach/routine/${routineId}`);
+    };
     return (
         <div className="container">
             <div className="sidebar">
@@ -169,12 +169,18 @@ const handleViewRoutine = (routineId) => {
                             </p>
                         </div>
                         <div className="header-actions">
-                            {<button 
+                            {/* <button
+                                className="create-routine-button"
+                                onClick={() => navigate('/coach/custom-routine/new')}
+                            >
+                                Crear Nueva Rutina
+                            </button> */}
+                            <button 
   className="create-routine-button" 
   onClick={() => navigate('/coach/custom-routine/new')}
 >
   Crear Nueva Rutina
-</button> }
+</button>
 
                             <button
                                 className="assign-button"
