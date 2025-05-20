@@ -55,6 +55,8 @@ const ClientRoutines = () => {
           <button className="menu-button" onClick={() => navigate('/client/dashboard')}>Dashboard</button>
           <button className="menu-button active">Mis Rutinas</button>
           <button className="menu-button" onClick={() => navigate('/client/profile')}>Mi Perfil</button>
+                    <button className="menu-button" onClick={handleLogout}>Cerrar sesión</button>
+
         </div>
       </div>
       

@@ -640,6 +640,8 @@ const ClienteDashboard = () => {
                         <button className="menu-button active">Mi Rutina</button>
                         <button className="menu-button" onClick={() => navigate('/cliente/membresia')}>Membresía</button>
                         <button className="menu-button" onClick={() => navigate('/cliente/entrenadores')}>Entrenadores</button>
+                                  <button className="menu-button" onClick={handleLogout}>Cerrar sesión</button>
+
                     </div>
                 </div>
 

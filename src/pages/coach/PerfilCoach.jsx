@@ -705,6 +705,8 @@ const data = () => {
           <button className="menu-button" onClick={() => navigate('/coach/dashboard')}>Dashboard</button>
           <button className="menu-button" onClick={() => navigate('/coach/routines')}>Rutinas</button>
           <button className="menu-button active">Mi Perfil</button>
+                    <button className="menu-button" onClick={logout}>Cerrar sesión</button>
+
         </div>
       </div>
       

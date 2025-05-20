@@ -376,7 +376,6 @@ const GestionCoaches = () => {
         </div>
         
         <div className="menu-buttons">
-          <button className="menu-button" onClick={() => navigate('/admin/dashboard')}>Dashboard</button>
           <button className="menu-button active">Gestión de Coaches</button>
           <button className="menu-button" onClick={() => navigate('/admin/usuarios')}>Gestión de Usuarios</button>
           <button className="menu-button" onClick={handleLogout}>Cerrar sesión</button>

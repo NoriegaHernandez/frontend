@@ -336,6 +336,8 @@ const ExerciseEditor = () => {
           <button className="menu-button" onClick={() => navigate('/coach/dashboard')}>Dashboard</button>
           <button className="menu-button active">Rutinas</button>
           <button className="menu-button" onClick={() => navigate('/coach/data')}>Mi Perfil</button>
+                    <button className="menu-button" onClick={logout}>Cerrar sesión</button>
+
         </div>
       </div>
       
