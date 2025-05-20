@@ -24,6 +24,7 @@ import PerfilUsuario from './pages/cliente/Perfilusuario';
 import CoachDashboard from './pages/coach/Dashboard';
 import InformacionCoach from './pages/coach/InformacionCoach';
 import PerfilCoach from './pages/coach/PerfilCoach';
+import CustomRoutine from './pages/coach/CustomRoutine'; // I
 
 // Páginas de administrador
 import AdminDashboard from './pages/admin/Dashboard';
@@ -71,6 +72,7 @@ function App() {
             <Route path="/coach/dashboard" element={<CoachDashboard />} />
             <Route path="/coach/perfil" element={<InformacionCoach />} />
             <Route path="/coach/data" element={<PerfilCoach />} />
+             <Route path="/coach/custom-routine/:clientId" element={<CustomRoutine />} />
           </Route>
           
           {/* Rutas protegidas para administradores */}

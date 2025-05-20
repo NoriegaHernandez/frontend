@@ -10,6 +10,44 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   }
 });
+// Define the authHeader function
+const authHeader = () => {
+  const token = localStorage.getItem('token');
+  return token 
+    ? { 'x-auth-token': token, 'Content-Type': 'application/json' } 
+    : { 'Content-Type': 'application/json' };
+};
+
+// Implement the handleApiError function
+const handleApiError = (error) => {
+  // Log the error for debugging
+  console.error('API Error:', error);
+  
+  // You can handle specific error cases here
+  if (error.response) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    console.error('Response error:', error.response.data);
+    console.error('Status:', error.response.status);
+    
+    // Handle token expiration or auth errors
+    if (error.response.status === 401) {
+      // Handle unauthorized error, e.g., clear token and redirect to login
+      localStorage.removeItem('token');
+      // You might want to redirect to login page here
+      // window.location.href = '/login';
+    }
+  } else if (error.request) {
+    // The request was made but no response was received
+    console.error('Request error:', error.request);
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    console.error('Error message:', error.message);
+  }
+  
+  // Return the error so it can be handled further if needed
+  return error;
+};
 
 // Agregar interceptor para enviar el token en cada solicitud
 axiosInstance.interceptors.request.use(
@@ -27,6 +65,7 @@ axiosInstance.interceptors.request.use(
 
 // Servicios API
 const api = {
+  
   // Prueba de conexión
   testConnection: async () => {
     try {
@@ -47,19 +86,78 @@ const api = {
   }
 },
 
+// assignRoutineToClient: async (clientId, routineId) => {
+//   try {
+//     console.log('Asignando rutina:', {
+//       userId: clientId,
+//       routineId: routineId
+//     });
+    
+//     const response = await axiosInstance.post('/coach/assign-routine', {
+//       userId: clientId,
+//       routineId: routineId
+//     });
+    
+//     return response;
+//   } catch (error) {
+//     console.error('Error al asignar rutina a cliente:', error);
+//     console.error('Detalles del error:', {
+//       mensaje: error.response?.data?.message,
+//       status: error.response?.status,
+//       data: error.response?.data
+//     });
+//     throw error;
+//   }
+// },
 assignRoutineToClient: async (clientId, routineId) => {
   try {
-    const response = await axiosInstance.post('/coach/assign-routine', {
-      userId: clientId,
-      routineId: routineId
-    });
+    // Log the input values for debugging
+    console.log('Valores recibidos en assignRoutineToClient:');
+    console.log('  clientId:', clientId, typeof clientId);
+    console.log('  routineId:', routineId, typeof routineId);
+
+    // Validar que haya un ID de cliente y rutina
+    if (!clientId || !routineId) {
+      console.error('Error: clientId o routineId están vacíos o son inválidos');
+      throw new Error('Se requiere ID de usuario y rutina válidos');
+    }
+    
+    // Convert to integers if they're strings
+    const idCliente = typeof clientId === 'string' ? parseInt(clientId, 10) : clientId;
+    const idRutina = typeof routineId === 'string' ? parseInt(routineId, 10) : routineId;
+    
+    console.log('Enviando solicitud con valores convertidos:');
+    console.log('  id_cliente:', idCliente, typeof idCliente);
+    console.log('  id_rutina:', idRutina, typeof idRutina);
+    
+    // Verificar que los enteros son válidos después de la conversión
+    if (isNaN(idCliente) || isNaN(idRutina)) {
+      console.error('Error: conversión a entero falló, valores inválidos');
+      throw new Error('IDs deben ser valores numéricos válidos');
+    }
+    
+    const requestBody = {
+      id_cliente: idCliente,
+      id_rutina: idRutina
+    };
+    
+    console.log('Enviando datos al servidor:', JSON.stringify(requestBody));
+    
+    const response = await axiosInstance.post('/coach/assign-routine', requestBody);
+    
+    console.log('Respuesta del servidor:', response.status, response.data);
+    
     return response;
   } catch (error) {
-    console.error('Error en assignRoutineToClient:', error);
+    console.error('Error al asignar rutina a cliente:', error);
+    console.error('Detalles del error:', {
+      mensaje: error.response?.data?.message,
+      status: error.response?.status,
+      data: error.response?.data
+    });
     throw error;
   }
 },
-
 getClientRoutines: async () => {
   try {
     const response = await axiosInstance.get('/client/routines');
@@ -111,81 +209,7 @@ testRegister: async (userData) => {
   },
   
 
-  
-// getCurrentUser: async () => {
-//   try {
-//     console.log('Iniciando solicitud getCurrentUser');
-    
-//     // Verificar si hay token en localStorage
-//     const token = localStorage.getItem('token');
-//     if (!token) {
-//       console.error('No hay token almacenado en localStorage');
-//       throw new Error('No hay token de autenticación');
-//     }
-    
 
-//     console.log('Cabeceras de la solicitud:', {
-//       'Content-Type': 'application/json',
-//       'x-auth-token': token.substring(0, 10) + '...'
-//     });
-    
-//     // Hacer la solicitud con manejo explícito de respuesta
-//     const response = await axiosInstance.get('/auth/me');
-    
-//     // Verificar si la respuesta es exitosa
-//     if (response.status !== 200) {
-//       console.error('Respuesta con código de error:', response.status);
-//       throw new Error(`Error en la respuesta: ${response.status}`);
-//     }
-    
-//     // Verificar si hay datos en la respuesta
-//     if (!response.data) {
-//       console.error('La respuesta no contiene datos');
-//       throw new Error('La respuesta no contiene datos del usuario');
-//     }
-    
-//     console.log('Datos del usuario obtenidos correctamente:', {
-//       id: response.data.id_usuario,
-//       nombre: response.data.nombre,
-//       email: response.data.email,
-//       tipoUsuario: response.data.tipo_usuario
-//     });
-    
-//     return response.data;
-//   } catch (error) {
-//     // Manejo detallado de errores
-//     if (error.response) {
-//       // El servidor respondió con un código de error
-//       console.error('Error de respuesta del servidor:', {
-//         status: error.response.status,
-//         data: error.response.data,
-//         headers: error.response.headers
-//       });
-      
-//       // Mensaje específico según el código de error
-//       if (error.response.status === 401) {
-//         console.error('Error de autenticación: Token inválido o expirado');
-//         // Limpiar token y redirigir al login
-//         localStorage.removeItem('token');
-//         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
-//       } else if (error.response.status === 404) {
-//         console.error('Ruta no encontrada. Verificar URL de la API');
-//         throw new Error('Servicio no disponible. Por favor contacte al administrador.');
-//       } else {
-//         console.error(`Error ${error.response.status}: ${error.response.data.message || 'Error del servidor'}`);
-//         throw new Error(error.response.data.message || 'Error al obtener datos del usuario');
-//       }
-//     } else if (error.request) {
-//       // La solicitud fue hecha pero no se recibió respuesta
-//       console.error('No se recibió respuesta del servidor:', error.request);
-//       throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
-//     } else {
-//       // Error en la configuración de la solicitud
-//       console.error('Error al configurar la solicitud:', error.message);
-//       throw new Error('Error en la aplicación. Por favor contacte al administrador.');
-//     }
-//   }
-//   },
   getCurrentUser: async () => {
     try {
       console.log('Iniciando solicitud getCurrentUser');
@@ -260,18 +284,6 @@ testRegister: async (userData) => {
     }
   },
 
-
-// Función para verificar el email con el token
-// verifyEmail: async (token) => {
-//   try {
-//     const response = await axiosInstance.get(`/auth/verify-email/${token}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error al verificar email:', error);
-//     throw error;
-//   }
-// },
-// ACTUALIZACIÓN IMPORTANTE: Función para verificar email con timeout y mejor manejo de errores
   verifyEmail: async (token) => {
     try {
       console.log("API - Iniciando verificación de email");
@@ -1336,67 +1348,102 @@ requestCoach: async (coachId) => {
     }
   }
 },
-// Añade estas funciones al objeto api en api.js
+// Reemplaza estos métodos por versiones correctas que usen axiosInstance y async/await
 
-  getClientById: async (clientId) => {
-    try {
-      const response = await axiosInstance.get(`/coach/clients/${clientId}`);
-      return response;
-    } catch (error) {
-      console.error('Error al obtener información del cliente:', error);
-      throw error;
-    }
-  },
-
-  // Obtener rutinas de un cliente
-  getClientRoutines: async (clientId) => {
-    try {
-      const response = await axiosInstance.get(`/coach/clients/${clientId}/routines`);
-      return response;
-    } catch (error) {
-      console.error('Error al obtener rutinas del cliente:', error);
-      throw error;
-    }
-  },
-    getExercises: async () => {
-    try {
-      const response = await axiosInstance.get('/coach/exercises');
-      return response;
-    } catch (error) {
-      console.error('Error al obtener ejercicios:', error);
-      throw error;
-    }
-  },
-
-// Guardar rutina de un cliente
-  saveClientRoutine: async (clientId, routineData) => {
-    try {
-      const response = await axiosInstance.post(`/coach/clients/${clientId}/routines`, routineData);
-      return response;
-    } catch (error) {
-      console.error('Error al guardar rutina del cliente:', error);
-      throw error;
-    }
+// Métodos para coaches
+getExercises: async () => {
+  try {
+    const response = await axiosInstance.get('/coach/exercises');
+    return response;
+  } catch (error) {
+    console.error('Error al obtener ejercicios:', error);
+    throw error;
+  }
 },
-  // Obtener un ejercicio específico
-  getExerciseById: async (exerciseId) => {
-    try {
-      const response = await axiosInstance.get(`/coach/exercises/${exerciseId}`);
-      return response;
-    } catch (error) {
-      console.error('Error al obtener ejercicio:', error);
-      throw error;
-    }
-  },
-    createExercise: async (exerciseData) => {
-    try {
-      const response = await axiosInstance.post('/coach/exercises', exerciseData);
-      return response;
-    } catch (error) {
-      console.error('Error al crear ejercicio:', error);
-      throw error;
-    }
-  },
+
+getClientById: async (clientId) => {
+  try {
+    const response = await axiosInstance.get(`/coach/client/${clientId}`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener cliente por ID:', error);
+    throw error;
+  }
+},
+
+getCoachRoutines: async () => {
+  try {
+    const response = await axiosInstance.get('/coach/routines');
+    return response;
+  } catch (error) {
+    console.error('Error al obtener rutinas del coach:', error);
+    throw error;
+  }
+},
+
+getRoutineDetails: async (routineId) => {
+  try {
+    const response = await axiosInstance.get(`/coach/routine/${routineId}`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener detalles de rutina:', error);
+    throw error;
+  }
+},
+
+createCustomRoutine: async (routineData) => {
+  try {
+    const response = await axiosInstance.post('/coach/routine', routineData);
+    return response;
+  } catch (error) {
+    console.error('Error al crear rutina personalizada:', error);
+    throw error;
+  }
+},
+
+assignRoutineToClient: async (clientId, routineId) => {
+  try {
+    const response = await axiosInstance.post('/coach/assign-routine', {
+      id_cliente: clientId,
+      id_rutina: routineId
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al asignar rutina a cliente:', error);
+    throw error;
+  }
+},
+
+// Métodos para clientes
+getClientRoutines: async () => {
+  try {
+    const response = await axiosInstance.get('/client/routines');
+    return response;
+  } catch (error) {
+    console.error('Error al obtener rutinas del cliente:', error);
+    throw error;
+  }
+},
+
+getClientRoutineDetails: async (routineId) => {
+  try {
+    const response = await axiosInstance.get(`/client/routine/${routineId}`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener detalles de rutina del cliente:', error);
+    throw error;
+  }
+},
+
+completeRoutine: async (routineId) => {
+  try {
+    const response = await axiosInstance.put(`/client/routine/${routineId}/complete`, {});
+    return response;
+  } catch (error) {
+    console.error('Error al completar rutina:', error);
+    throw error;
+  }
+},
 // Esta función es opcional, sólo si necesitas ver el historial
 getClientMembershipHistory: async () => {
   try {
@@ -1427,14 +1474,6 @@ const verifyEmailDirect = async (token) => {
   window.location.href = `${apiUrl}/api/auth/verify-email-direct/${token}`;
 };
 
-// Agregar estas funciones al objeto api en client/src/services/api.js
 
-// Obtener todos los ejercicios disponibles
-
-
-
-
-
-// Exportarlos
 export { verifyEmail, verifyEmailDirect };
 export default api;
