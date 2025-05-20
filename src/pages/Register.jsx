@@ -229,29 +229,7 @@ const Register = () => {
               placeholder="Fecha de Nacimiento"
             />
           </div>
-          
-          <div className="input-container tipo-membresia">
-            <img className="icon" src={iconPaths.contrato} alt="Contrato" />
-            <div style={{ flexGrow: 1 }}>
-              <select 
-                id="tipo_membresia" 
-                name="tipo_membresia"
-                value={formData.tipo_membresia}
-                onChange={handleChange}
-                required
-              >
-                <option value="" disabled>Tipo Membresía</option>
-                <option value="mensual">Mensual</option>
-                <option value="anual">Anual</option>
-                <option value="semanal">Semanal</option>
-              </select>
-            </div>
-            {formData.tipo_membresia && (
-              <div className="membresia-pill">
-                {formData.tipo_membresia.charAt(0).toUpperCase() + formData.tipo_membresia.slice(1)}
-              </div>
-            )}
-          </div>
+        
           
           <div className="terminos-container">
             <h3>Términos y Condiciones</h3>
