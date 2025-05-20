@@ -43,9 +43,9 @@ const RoutineDetails = () => {
 
 
         const assignedResponse = await api.getRoutineAssignments(routineId);
-  if (assignedResponse.data) {
-    setAssignedClients(assignedResponse.data);
-    }
+        if (assignedResponse.data) {
+          setAssignedClients(assignedResponse.data);
+        }
         // Obtener detalles de la rutina
         const routineResponse = await api.getRoutineDetails(routineId);
         if (!routineResponse.data) {
