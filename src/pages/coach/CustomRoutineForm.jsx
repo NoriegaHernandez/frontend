@@ -7,7 +7,7 @@ import api from '../../services/api';
 import './CoachStyles.css';
 
 const CustomRoutineForm = () => {
-  const { clientId } = useParams(); // Get clientId from URL params
+  const { clientId ="new"} = useParams(); // Get clientId from URL params
   const { user } = useAuth();
   const navigate = useNavigate();
   

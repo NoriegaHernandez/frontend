@@ -138,11 +138,16 @@ const RoutinesManagement = () => {
                     </div>
                 </div>
 
-                <div className="menu-buttons">
+                {/* <div className="menu-buttons">
                     <button className="menu-button" onClick={() => navigate('/coach/dashboard')}>Dashboard</button>
                     <button className="menu-button active">Rutinas</button>
                     <button className="menu-button" onClick={() => navigate('/coach/data')}>Mi Perfil</button>
-                </div>
+                </div> */}
+                <div className="menu-buttons">
+  <button className="menu-button" onClick={() => navigate('/coach/dashboard')}>Dashboard</button>
+  <button className="menu-button active">Rutinas</button>
+  <button className="menu-button" onClick={() => navigate('/coach/data')}>Mi Perfil</button>
+</div>
             </div>
 
             <div className="main-content">
@@ -169,18 +174,14 @@ const RoutinesManagement = () => {
                             </p>
                         </div>
                         <div className="header-actions">
-                            {/* <button
+
+                            <button
                                 className="create-routine-button"
                                 onClick={() => navigate('/coach/custom-routine/new')}
                             >
                                 Crear Nueva Rutina
-                            </button> */}
-                            <button 
-  className="create-routine-button" 
-  onClick={() => navigate('/coach/custom-routine/new')}
->
-  Crear Nueva Rutina
-</button>
+                            </button>
+
 
                             <button
                                 className="assign-button"
