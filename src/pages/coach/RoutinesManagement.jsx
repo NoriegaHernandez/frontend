@@ -164,12 +164,12 @@ const handleAssignRoutine = async () => {
                             </p>
                         </div>
                         <div className="header-actions">
-                            <button
-                                className="create-routine-button"
-                                onClick={() => navigate('/coach/custom-routine/new')}
-                            >
-                                Crear Nueva Rutina
-                            </button>
+<button 
+  className="create-routine-button" 
+  onClick={() => navigate('/coach/custom-routine/new')}
+>
+  Crear Nueva Rutina
+</button>
 
                             <button
                                 className="assign-button"

@@ -205,12 +205,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <CustomRoutineForm />
   </RoleRoute>
 }/>
+ <Route path="/coach/custom-routine/:clientId" element={
+            <RoleRoute allowedRoles={['coach']}>
+              <CustomRoutineForm />
+            </RoleRoute>
+          } />
 
-
-<Route path="/coach/custom-routine/:clientId" element={
-  <RoleRoute allowedRoles={['coach']}>
-    <CustomRoutineForm />
-  </RoleRoute>}/> 
 
           {/* Rutas del administrador */}
           <Route path="/admin/dashboard" element={
