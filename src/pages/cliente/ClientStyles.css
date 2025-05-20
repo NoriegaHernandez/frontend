@@ -793,3 +793,359 @@
   margin: 0 auto;
   color: #6c757d;
 }
+/* client/src/pages/cliente/ClientStyles.css */
+/* Estilos para la vista de rutinas del cliente */
+
+/* Estilos generales */
+.content-wrapper {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Encabezado de la rutina */
+.routine-header {
+  margin-bottom: 25px;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.routine-header h1 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 2.2rem;
+}
+
+.routine-meta {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.difficulty-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.principiante {
+  background-color: #e6f7ff;
+  color: #0d6efd;
+}
+
+.intermedio {
+  background-color: #fff7e6;
+  color: #fa8c16;
+}
+
+.avanzado {
+  background-color: #fff1f0;
+  color: #f5222d;
+}
+
+.routine-duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #f8f9fa;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.routine-objective {
+  margin-top: 15px;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  color: #495057;
+}
+
+/* Alerta para día de entrenamiento */
+.today-is-training-day {
+  background-color: #dff9e6;
+  border-left: 4px solid #52c41a;
+  padding: 15px;
+  margin-bottom: 25px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.training-badge {
+  display: inline-block;
+  background-color: #52c41a;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+/* Selector de días */
+.training-days-container {
+  margin-bottom: 25px;
+}
+
+.training-days-container h2 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.days-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.day-tab {
+  padding: 8px 15px;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  position: relative;
+}
+
+.day-tab:hover {
+  background-color: #e9ecef;
+}
+
+.day-tab.active {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+.today-indicator {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #ff4d4f;
+  color: white;
+  font-size: 0.7rem;
+  border-radius: 10px;
+  padding: 2px 6px;
+}
+
+/* Visualizador de ejercicios */
+.exercises-display {
+  margin-bottom: 30px;
+}
+
+.exercise-container {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.exercise-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.exercise-header h3 {
+  margin-bottom: 5px;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.exercise-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.exercise-content {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+@media (min-width: 768px) {
+  .exercise-content {
+    flex-direction: row;
+    gap: 30px;
+  }
+}
+
+.exercise-image {
+  flex: 0 0 35%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .exercise-image {
+    margin-bottom: 0;
+  }
+}
+
+.exercise-image img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.exercise-details {
+  flex: 1;
+}
+
+.exercise-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #0d6efd;
+}
+
+.stat-label {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.exercise-instructions {
+  margin-bottom: 20px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.exercise-notes, .exercise-muscles {
+  font-size: 0.9rem;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+/* Navegación entre ejercicios */
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 20px;
+  border-top: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.nav-button {
+  padding: 8px 16px;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.nav-button:hover {
+  background-color: #0b5ed7;
+}
+
+/* Mensaje de "No hay ejercicios" */
+.no-exercises {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  color: #6c757d;
+}
+
+/* Pie de página de la rutina */
+.routine-footer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Contenedor para cuando no hay rutina */
+.no-routine-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.no-routine-icon {
+  font-size: 3rem;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.no-routine-container h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.no-routine-container p {
+  max-width: 500px;
+  margin: 0 auto 25px;
+  color: #6c757d;
+}
+
+.primary-button {
+  padding: 10px 20px;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.primary-button:hover {
+  background-color: #0b5ed7;
+}
+
+/* Mensaje de error */
+.error-message {
+  text-align: center;
+  padding: 30px 20px;
+  background-color: #fff1f0;
+  border-radius: 8px;
+  color: #f5222d;
+  margin-bottom: 20px;
+}
+
+.retry-button {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background-color: #f5222d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retry-button:hover {
+  background-color: #cf1322;
+}

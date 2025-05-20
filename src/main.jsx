@@ -10,7 +10,7 @@ import GestionUsuarios from './pages/admin/GestionUsuarios';
 
 
 // Páginas del cliente
-import ClienteDashboard from './pages/cliente/RoutineView'
+import ClienteDashboard from './pages/cliente/Dashboard'
 import Informacion from './pages/cliente/Informacion'
 import Membresia from './pages/cliente/Membresia'
 import Entrenadores from './pages/cliente/Entrenadores'
