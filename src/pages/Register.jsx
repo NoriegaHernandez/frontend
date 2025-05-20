@@ -207,6 +207,7 @@ const Register = () => {
           </div>
           
           <div className="input-container">
+            <img className="icon" src={iconPaths.direccion} alt="Direccion"/>
             <input
               type="text"
               id="direccion"
@@ -218,6 +219,7 @@ const Register = () => {
           </div>
           
           <div className="input-container">
+            <img className="icon" src={iconPaths.fecha} alt="Fecha"/>
             <input
               type="date"
               id="fecha_nacimiento"
