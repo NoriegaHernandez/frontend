@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+
+
 import './CoachStyles.css';
 
 const RoutinesManagement = () => {
@@ -167,12 +169,12 @@ const handleViewRoutine = (routineId) => {
                             </p>
                         </div>
                         <div className="header-actions">
-                            {/* <button 
+                            {<button 
   className="create-routine-button" 
   onClick={() => navigate('/coach/custom-routine/new')}
 >
   Crear Nueva Rutina
-</button> */}
+</button> }
 
                             <button
                                 className="assign-button"
