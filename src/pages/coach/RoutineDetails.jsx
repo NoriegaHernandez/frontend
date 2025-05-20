@@ -9,13 +9,13 @@ const RoutineDetails = () => {
   const { routineId } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+
   // Estado para datos de la rutina
   const [routine, setRoutine] = useState(null);
   const [exercises, setExercises] = useState([]);
   const [clients, setClients] = useState([]);
   const [assignedClients, setAssignedClients] = useState([]);
-  
+
   // Estado para UI
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +23,7 @@ const RoutineDetails = () => {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState('');
   const [isAssigning, setIsAssigning] = useState(false);
-  
+
   // Estado para edición
   const [isEditing, setIsEditing] = useState(false);
   const [editFormData, setEditFormData] = useState({
@@ -33,22 +33,27 @@ const RoutineDetails = () => {
     nivel_dificultad: '',
     duracion_estimada: 0
   });
-  
+
   // Cargar datos iniciales
   useEffect(() => {
     const fetchRoutineDetails = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
+
+        const assignedResponse = await api.getRoutineAssignments(routineId);
+  if (assignedResponse.data) {
+    setAssignedClients(assignedResponse.data);
+    }
         // Obtener detalles de la rutina
         const routineResponse = await api.getRoutineDetails(routineId);
         if (!routineResponse.data) {
           throw new Error('No se pudieron cargar los detalles de la rutina');
         }
-        
+
         setRoutine(routineResponse.data);
-        
+
         // Inicializar datos de edición
         setEditFormData({
           nombre: routineResponse.data.nombre || '',
@@ -57,18 +62,18 @@ const RoutineDetails = () => {
           nivel_dificultad: routineResponse.data.nivel_dificultad || 'intermedio',
           duracion_estimada: routineResponse.data.duracion_estimada || 45
         });
-        
+
         // Si hay ejercicios en la respuesta, establecerlos
         if (routineResponse.data.ejercicios && Array.isArray(routineResponse.data.ejercicios)) {
           setExercises(routineResponse.data.ejercicios);
         }
-        
+
         // Cargar clientes a los que se puede asignar la rutina
         const clientsResponse = await api.getCoachClients();
         if (clientsResponse.data) {
           setClients(clientsResponse.data);
         }
-        
+
         // Cargar clientes que ya tienen asignada esta rutina
         // Esta llamada podría necesitar desarrollarse en el backend
         try {
@@ -81,7 +86,7 @@ const RoutineDetails = () => {
           // No es un error crítico, así que continuamos
           setAssignedClients([]);
         }
-        
+
         setLoading(false);
       } catch (error) {
         console.error('Error al cargar detalles de la rutina:', error);
@@ -89,10 +94,10 @@ const RoutineDetails = () => {
         setLoading(false);
       }
     };
-    
+
     fetchRoutineDetails();
   }, [routineId]);
-  
+
   // Manejar cambios en el formulario de edición
   const handleEditInputChange = (e) => {
     const { name, value } = e.target;
@@ -101,27 +106,27 @@ const RoutineDetails = () => {
       [name]: value
     });
   };
-  
+
   // Guardar cambios de edición
   const handleSaveChanges = async () => {
     try {
       setIsAssigning(true); // Reutilizamos esta variable para indicar carga
-      
+
       // Llamada a la API para actualizar la rutina
       await api.updateRoutine(routineId, editFormData);
-      
+
       // Actualizar el estado local
       setRoutine({
         ...routine,
         ...editFormData
       });
-      
+
       setIsEditing(false);
       setNotification({
         type: 'success',
         message: 'Rutina actualizada correctamente'
       });
-      
+
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
       console.error('Error al actualizar la rutina:', error);
@@ -133,7 +138,7 @@ const RoutineDetails = () => {
       setIsAssigning(false);
     }
   };
-  
+
   // Asignar rutina a un cliente
   const handleAssignRoutine = async () => {
     if (!selectedClientId) {
@@ -143,29 +148,29 @@ const RoutineDetails = () => {
       });
       return;
     }
-    
+
     try {
       setIsAssigning(true);
-      
+
       await api.assignRoutineToClient(selectedClientId, routineId);
-      
+
       // Actualizar la lista de clientes asignados
       const client = clients.find(c => c.id_usuario.toString() === selectedClientId);
-      
+
       if (client) {
         setAssignedClients([...assignedClients, {
           ...client,
           fecha_asignacion: new Date().toISOString()
         }]);
       }
-      
+
       setShowAssignModal(false);
       setSelectedClientId('');
       setNotification({
         type: 'success',
         message: 'Rutina asignada correctamente'
       });
-      
+
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
       console.error('Error al asignar rutina:', error);
@@ -177,7 +182,7 @@ const RoutineDetails = () => {
       setIsAssigning(false);
     }
   };
-  
+
   // Cancelar edición
   const handleCancelEdit = () => {
     // Restaurar valores originales
@@ -188,15 +193,15 @@ const RoutineDetails = () => {
       nivel_dificultad: routine.nivel_dificultad || 'intermedio',
       duracion_estimada: routine.duracion_estimada || 45
     });
-    
+
     setIsEditing(false);
   };
-  
+
   // Duplicar rutina
   const handleDuplicateRoutine = async () => {
     try {
       setIsAssigning(true);
-      
+
       // Crear una copia de la rutina con los ejercicios
       const duplicatedRoutine = {
         nombre: `Copia de ${routine.nombre}`,
@@ -213,15 +218,15 @@ const RoutineDetails = () => {
           orden: ex.orden
         }))
       };
-      
+
       // Llamar a la API para crear la nueva rutina
       const response = await api.createCustomRoutine(duplicatedRoutine);
-      
+
       setNotification({
         type: 'success',
         message: 'Rutina duplicada correctamente'
       });
-      
+
       // Después de 2 segundos, redirigir a la nueva rutina
       setTimeout(() => {
         navigate(`/coach/routine/${response.data.id_rutina}`);
@@ -235,25 +240,25 @@ const RoutineDetails = () => {
       setIsAssigning(false);
     }
   };
-  
+
   // Eliminar rutina
   const handleDeleteRoutine = async () => {
     // Confirmación
     if (!window.confirm('¿Estás seguro de que deseas eliminar esta rutina? Esta acción no se puede deshacer.')) {
       return;
     }
-    
+
     try {
       setIsAssigning(true);
-      
+
       // Llamar a la API para eliminar la rutina
       await api.deleteRoutine(routineId);
-      
+
       setNotification({
         type: 'success',
         message: 'Rutina eliminada correctamente'
       });
-      
+
       // Después de 2 segundos, redirigir a la lista de rutinas
       setTimeout(() => {
         navigate('/coach/routines');
@@ -267,12 +272,12 @@ const RoutineDetails = () => {
       setIsAssigning(false);
     }
   };
-  
+
   // Filtrar clientes que no tienen la rutina asignada
-  const availableClients = clients.filter(client => 
+  const availableClients = clients.filter(client =>
     !assignedClients.some(assigned => assigned.id_usuario === client.id_usuario)
   );
-  
+
   return (
     <div className="container">
       <div className="sidebar">
@@ -281,14 +286,14 @@ const RoutineDetails = () => {
             <img src="/logo.png" alt="Logo Gimnasio" className='logo-img' />
           </div>
         </div>
-        
+
         <div className="menu-buttons">
           <button className="menu-button" onClick={() => navigate('/coach/dashboard')}>Dashboard</button>
           <button className="menu-button active">Rutinas</button>
           <button className="menu-button" onClick={() => navigate('/coach/data')}>Mi Perfil</button>
         </div>
       </div>
-      
+
       <div className="main-content">
         <div className="content-wrapper">
           {/* Mensaje de error si existe */}
@@ -298,24 +303,24 @@ const RoutineDetails = () => {
               <button className="error-close" onClick={() => setError(null)}>×</button>
             </div>
           )}
-          
+
           {notification && (
             <div className={`notification ${notification.type}`}>
               {notification.message}
             </div>
           )}
-          
+
           <div className="page-header">
             <div className="header-title">
               <h1 className="page-title">Detalle de Rutina</h1>
-              <button 
+              <button
                 className="back-button"
                 onClick={() => navigate('/coach/routines')}
               >
                 ← Volver a Rutinas
               </button>
             </div>
-            
+
             <div className="header-actions">
               <button
                 className="duplicate-button"
@@ -324,7 +329,7 @@ const RoutineDetails = () => {
               >
                 Duplicar Rutina
               </button>
-              
+
               <button
                 className="assign-button"
                 onClick={() => setShowAssignModal(true)}
@@ -334,7 +339,7 @@ const RoutineDetails = () => {
               </button>
             </div>
           </div>
-          
+
           {loading ? (
             <div className="loading-container">
               <div className="spinner"></div>
@@ -380,7 +385,7 @@ const RoutineDetails = () => {
                     </div>
                   )}
                 </div>
-                
+
                 {isEditing ? (
                   <div className="edit-routine-form">
                     <div className="form-group">
@@ -394,7 +399,7 @@ const RoutineDetails = () => {
                         required
                       />
                     </div>
-                    
+
                     <div className="form-row">
                       <div className="form-group">
                         <label htmlFor="objetivo">Objetivo</label>
@@ -406,7 +411,7 @@ const RoutineDetails = () => {
                           onChange={handleEditInputChange}
                         />
                       </div>
-                      
+
                       <div className="form-group">
                         <label htmlFor="nivel_dificultad">Nivel de Dificultad</label>
                         <select
@@ -420,7 +425,7 @@ const RoutineDetails = () => {
                           <option value="avanzado">Avanzado</option>
                         </select>
                       </div>
-                      
+
                       <div className="form-group">
                         <label htmlFor="duracion_estimada">Duración (min)</label>
                         <input
@@ -434,7 +439,7 @@ const RoutineDetails = () => {
                         />
                       </div>
                     </div>
-                    
+
                     <div className="form-group">
                       <label htmlFor="descripcion">Descripción</label>
                       <textarea
@@ -449,7 +454,7 @@ const RoutineDetails = () => {
                 ) : (
                   <div className="routine-info">
                     <h3 className="routine-name">{routine?.nombre || 'Sin nombre'}</h3>
-                    
+
                     <div className="routine-meta">
                       <div className="meta-item">
                         <span className="meta-label">Nivel:</span>
@@ -457,27 +462,27 @@ const RoutineDetails = () => {
                           {routine?.nivel_dificultad || 'Intermedio'}
                         </span>
                       </div>
-                      
+
                       <div className="meta-item">
                         <span className="meta-label">Objetivo:</span>
                         <span className="meta-value">{routine?.objetivo || 'General'}</span>
                       </div>
-                      
+
                       <div className="meta-item">
                         <span className="meta-label">Duración:</span>
                         <span className="meta-value">{routine?.duracion_estimada || '45'} minutos</span>
                       </div>
-                      
+
                       <div className="meta-item">
                         <span className="meta-label">Creada:</span>
                         <span className="meta-value">
-                          {routine?.fecha_creacion 
-                            ? new Date(routine.fecha_creacion).toLocaleDateString() 
+                          {routine?.fecha_creacion
+                            ? new Date(routine.fecha_creacion).toLocaleDateString()
                             : 'Fecha desconocida'}
                         </span>
                       </div>
                     </div>
-                    
+
                     {routine?.descripcion && (
                       <div className="routine-description">
                         <h4>Descripción</h4>
@@ -487,7 +492,7 @@ const RoutineDetails = () => {
                   </div>
                 )}
               </div>
-              
+
               {/* Ejercicios de la rutina */}
               <div className="exercises-section">
                 <div className="section-header">
@@ -499,13 +504,13 @@ const RoutineDetails = () => {
                     Editar Ejercicios
                   </button> */}
                   <button
-  className="edit-exercises-button"
-  onClick={() => navigate(`/coach/routine/${routineId}/edit-exercises`)}
->
-  Editar Ejercicios
-</button>
+                    className="edit-exercises-button"
+                    onClick={() => navigate(`/coach/routine/${routineId}/edit-exercises`)}
+                  >
+                    Editar Ejercicios
+                  </button>
                 </div>
-                
+
                 {exercises.length === 0 ? (
                   <div className="empty-message">
                     <p>Esta rutina no tiene ejercicios asignados.</p>
@@ -524,31 +529,31 @@ const RoutineDetails = () => {
                           <span className="exercise-number">{exercise.orden || index + 1}</span>
                           <h3 className="exercise-name">{exercise.nombre || exercise.nombre_ejercicio}</h3>
                         </div>
-                        
+
                         <div className="exercise-details">
                           <div className="exercise-detail">
                             <span className="detail-label">Series:</span>
                             <span className="detail-value">{exercise.series}</span>
                           </div>
-                          
+
                           <div className="exercise-detail">
                             <span className="detail-label">Repeticiones:</span>
                             <span className="detail-value">{exercise.repeticiones}</span>
                           </div>
-                          
+
                           <div className="exercise-detail">
                             <span className="detail-label">Descanso:</span>
                             <span className="detail-value">{exercise.descanso_segundos} segundos</span>
                           </div>
                         </div>
-                        
+
                         {exercise.notas && (
                           <div className="exercise-notes">
                             <span className="notes-label">Notas:</span>
                             <p className="notes-text">{exercise.notas}</p>
                           </div>
                         )}
-                        
+
                         {(exercise.descripcion_ejercicio || exercise.ejercicio_descripcion) && (
                           <div className="exercise-description">
                             <p>{exercise.descripcion_ejercicio || exercise.ejercicio_descripcion}</p>
@@ -559,13 +564,13 @@ const RoutineDetails = () => {
                   </div>
                 )}
               </div>
-              
+
               {/* Clientes asignados */}
               <div className="assigned-clients-section">
                 <div className="section-header">
                   <h2>Clientes Asignados ({assignedClients.length})</h2>
                 </div>
-                
+
                 {assignedClients.length === 0 ? (
                   <div className="empty-message">
                     <p>Esta rutina no está asignada a ningún cliente.</p>
@@ -586,12 +591,12 @@ const RoutineDetails = () => {
                           <h3 className="client-name">{client.nombre}</h3>
                           <p className="client-email">{client.email}</p>
                         </div>
-                        
+
                         <div className="assignment-info">
                           <span className="assignment-date">
                             Asignada: {new Date(client.fecha_asignacion).toLocaleDateString()}
                           </span>
-                          
+
                           <div className="client-actions">
                             <button
                               className="view-client-button"
@@ -608,19 +613,19 @@ const RoutineDetails = () => {
               </div>
             </div>
           )}
-          
+
           {/* Modal para asignar rutina */}
           {showAssignModal && (
             <div className="modal-overlay">
               <div className="assign-modal">
                 <div className="modal-header">
                   <h2>Asignar Rutina a Cliente</h2>
-                  <button 
-                    className="close-button" 
+                  <button
+                    className="close-button"
                     onClick={() => setShowAssignModal(false)}
                   >×</button>
                 </div>
-                
+
                 <div className="modal-body">
                   <div className="form-group">
                     <label htmlFor="client-select">Seleccionar Cliente</label>
@@ -637,12 +642,12 @@ const RoutineDetails = () => {
                       ))}
                     </select>
                   </div>
-                  
+
                   <div className="modal-info">
                     <p>La nueva rutina reemplazará cualquier rutina activa que tenga el cliente.</p>
                   </div>
                 </div>
-                
+
                 <div className="modal-footer">
                   <button
                     className="cancel-button"
@@ -650,7 +655,7 @@ const RoutineDetails = () => {
                   >
                     Cancelar
                   </button>
-                  
+
                   <button
                     className="assign-button"
                     onClick={handleAssignRoutine}

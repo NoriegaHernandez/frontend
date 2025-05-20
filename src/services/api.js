@@ -1435,6 +1435,19 @@ getRoutineDetails: async (routineId) => {
 },
 
 // Obtener asignaciones de una rutina (clientes que tienen asignada esta rutina)
+// getRoutineAssignments: async (routineId) => {
+//   try {
+//     console.log(`Solicitando asignaciones para rutina ${routineId}`);
+//     const response = await axiosInstance.get(`/coach/routine/${routineId}/assignments`);
+//     return response;
+//   } catch (error) {
+//     console.error('Error al obtener asignaciones de rutina:', error);
+//     // Si el endpoint no existe, devolver un array vacío
+//     return { data: [] };
+//   }
+// },
+// Agregar a api.js
+// En api.js
 getRoutineAssignments: async (routineId) => {
   try {
     console.log(`Solicitando asignaciones para rutina ${routineId}`);
@@ -1446,7 +1459,6 @@ getRoutineAssignments: async (routineId) => {
     return { data: [] };
   }
 },
-
 // Actualizar información de una rutina
 updateRoutine: async (routineId, routineData) => {
   try {
