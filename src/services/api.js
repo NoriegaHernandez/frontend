@@ -384,7 +384,17 @@ testRegister: async (userData) => {
     }
   }
 },
-
+// Obtener medidas físicas de un cliente específico (para coach)
+getClientMeasurements: async (clientId) => {
+  try {
+    console.log(`Obteniendo medidas físicas del cliente ${clientId}`);
+    const response = await axiosInstance.get(`/coach/client-measurements/${clientId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener medidas físicas del cliente:', error);
+    throw error;
+  }
+},
   verifyEmail: async (token) => {
     try {
       console.log("API - Iniciando verificación de email");
