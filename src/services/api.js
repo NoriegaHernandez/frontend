@@ -210,79 +210,180 @@ testRegister: async (userData) => {
   
 
 
-  getCurrentUser: async () => {
-    try {
-      console.log('Iniciando solicitud getCurrentUser');
+  // getCurrentUser: async () => {
+  //   try {
+  //     console.log('Iniciando solicitud getCurrentUser');
       
-      // Verificar si hay token en localStorage
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('No hay token almacenado en localStorage');
-        throw new Error('No hay token de autenticación');
-      }
+  //     // Verificar si hay token en localStorage
+  //     const token = localStorage.getItem('token');
+  //     if (!token) {
+  //       console.error('No hay token almacenado en localStorage');
+  //       throw new Error('No hay token de autenticación');
+  //     }
       
-      console.log('Cabeceras de la solicitud:', {
-        'Content-Type': 'application/json',
-        'x-auth-token': token.substring(0, 10) + '...'
-      });
+  //     console.log('Cabeceras de la solicitud:', {
+  //       'Content-Type': 'application/json',
+  //       'x-auth-token': token.substring(0, 10) + '...'
+  //     });
       
-      // Hacer la solicitud con manejo explícito de respuesta
-      const response = await axiosInstance.get('/auth/me');
+  //     // Hacer la solicitud con manejo explícito de respuesta
+  //     const response = await axiosInstance.get('/auth/me');
       
-      // Verificar si la respuesta es exitosa
-      if (response.status !== 200) {
-        console.error('Respuesta con código de error:', response.status);
-        throw new Error(`Error en la respuesta: ${response.status}`);
-      }
+  //     // Verificar si la respuesta es exitosa
+  //     if (response.status !== 200) {
+  //       console.error('Respuesta con código de error:', response.status);
+  //       throw new Error(`Error en la respuesta: ${response.status}`);
+  //     }
       
-      // Verificar si hay datos en la respuesta
-      if (!response.data) {
-        console.error('La respuesta no contiene datos');
-        throw new Error('La respuesta no contiene datos del usuario');
-      }
+  //     // Verificar si hay datos en la respuesta
+  //     if (!response.data) {
+  //       console.error('La respuesta no contiene datos');
+  //       throw new Error('La respuesta no contiene datos del usuario');
+  //     }
       
-      console.log('Datos del usuario obtenidos correctamente:', {
-        id: response.data.id_usuario,
-        nombre: response.data.nombre,
-        email: response.data.email,
-        tipoUsuario: response.data.tipo_usuario
-      });
+  //     console.log('Datos del usuario obtenidos correctamente:', {
+  //       id: response.data.id_usuario,
+  //       nombre: response.data.nombre,
+  //       email: response.data.email,
+  //       tipoUsuario: response.data.tipo_usuario
+  //     });
       
-      return response.data;
-    } catch (error) {
-      // Manejo detallado de errores
-      if (error.response) {
-        // El servidor respondió con un código de error
-        console.error('Error de respuesta del servidor:', {
-          status: error.response.status,
-          data: error.response.data,
-          headers: error.response.headers
-        });
+  //     return response.data;
+  //   } catch (error) {
+  //     // Manejo detallado de errores
+  //     if (error.response) {
+  //       // El servidor respondió con un código de error
+  //       console.error('Error de respuesta del servidor:', {
+  //         status: error.response.status,
+  //         data: error.response.data,
+  //         headers: error.response.headers
+  //       });
         
-        // Mensaje específico según el código de error
-        if (error.response.status === 401) {
-          console.error('Error de autenticación: Token inválido o expirado');
-          // Limpiar token y redirigir al login
-          localStorage.removeItem('token');
-          throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
-        } else if (error.response.status === 404) {
-          console.error('Ruta no encontrada. Verificar URL de la API');
-          throw new Error('Servicio no disponible. Por favor contacte al administrador.');
-        } else {
-          console.error(`Error ${error.response.status}: ${error.response.data.message || 'Error del servidor'}`);
-          throw new Error(error.response.data.message || 'Error al obtener datos del usuario');
-        }
-      } else if (error.request) {
-        // La solicitud fue hecha pero no se recibió respuesta
-        console.error('No se recibió respuesta del servidor:', error.request);
-        throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
-      } else {
-        // Error en la configuración de la solicitud
-        console.error('Error al configurar la solicitud:', error.message);
-        throw new Error('Error en la aplicación. Por favor contacte al administrador.');
-      }
+  //       // Mensaje específico según el código de error
+  //       if (error.response.status === 401) {
+  //         console.error('Error de autenticación: Token inválido o expirado');
+  //         // Limpiar token y redirigir al login
+  //         localStorage.removeItem('token');
+  //         throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
+  //       } else if (error.response.status === 404) {
+  //         console.error('Ruta no encontrada. Verificar URL de la API');
+  //         throw new Error('Servicio no disponible. Por favor contacte al administrador.');
+  //       } else {
+  //         console.error(`Error ${error.response.status}: ${error.response.data.message || 'Error del servidor'}`);
+  //         throw new Error(error.response.data.message || 'Error al obtener datos del usuario');
+  //       }
+  //     } else if (error.request) {
+  //       // La solicitud fue hecha pero no se recibió respuesta
+  //       console.error('No se recibió respuesta del servidor:', error.request);
+  //       throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
+  //     } else {
+  //       // Error en la configuración de la solicitud
+  //       console.error('Error al configurar la solicitud:', error.message);
+  //       throw new Error('Error en la aplicación. Por favor contacte al administrador.');
+  //     }
+  //   }
+  // },
+  getCurrentUser: async () => {
+  try {
+    console.log('Iniciando solicitud getCurrentUser');
+    
+    // Verificar si hay token en localStorage
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No hay token almacenado en localStorage');
+      throw new Error('No hay token de autenticación');
     }
-  },
+    
+    console.log('Cabeceras de la solicitud:', {
+      'Content-Type': 'application/json',
+      'x-auth-token': token.substring(0, 10) + '...'
+    });
+    
+    // Hacer la solicitud con manejo explícito de respuesta
+    const response = await axiosInstance.get('/auth/me');
+    
+    // Verificar si la respuesta es exitosa
+    if (response.status !== 200) {
+      console.error('Respuesta con código de error:', response.status);
+      throw new Error(`Error en la respuesta: ${response.status}`);
+    }
+    
+    // Verificar si hay datos en la respuesta
+    if (!response.data) {
+      console.error('La respuesta no contiene datos');
+      throw new Error('La respuesta no contiene datos del usuario');
+    }
+    
+    console.log('Datos del usuario obtenidos correctamente:', {
+      id: response.data.id_usuario,
+      nombre: response.data.nombre,
+      email: response.data.email,
+      tipoUsuario: response.data.tipo_usuario
+    });
+    
+    // Obtener medidas físicas del usuario
+    try {
+      console.log('Iniciando solicitud de medidas físicas');
+      const medidasResponse = await axiosInstance.get('/client/physical-measurements');
+      
+      // Verificar respuesta de medidas
+      if (medidasResponse.status === 200 && medidasResponse.data && medidasResponse.data.length > 0) {
+        console.log(`Se encontraron ${medidasResponse.data.length} registros de medidas físicas`);
+        // Agregar medidas al objeto de respuesta
+        response.data.medidas = medidasResponse.data;
+      } else {
+        console.log('No se encontraron medidas físicas o la respuesta está vacía');
+        response.data.medidas = [];
+      }
+    } catch (medidasError) {
+      console.error('Error al obtener medidas físicas:', medidasError);
+      // Registrar el tipo específico de error
+      if (medidasError.response) {
+        console.error(`Error ${medidasError.response.status} al obtener medidas:`, medidasError.response.data);
+      } else if (medidasError.request) {
+        console.error('No se recibió respuesta al solicitar medidas físicas');
+      } else {
+        console.error('Error en configuración de solicitud de medidas:', medidasError.message);
+      }
+      // Inicializar arreglo vacío de medidas para no generar errores posteriores
+      response.data.medidas = [];
+    }
+    
+    return response.data;
+  } catch (error) {
+    // Manejo detallado de errores
+    if (error.response) {
+      // El servidor respondió con un código de error
+      console.error('Error de respuesta del servidor:', {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+      
+      // Mensaje específico según el código de error
+      if (error.response.status === 401) {
+        console.error('Error de autenticación: Token inválido o expirado');
+        // Limpiar token y redirigir al login
+        localStorage.removeItem('token');
+        throw new Error('Sesión expirada. Por favor inicie sesión nuevamente.');
+      } else if (error.response.status === 404) {
+        console.error('Ruta no encontrada. Verificar URL de la API');
+        throw new Error('Servicio no disponible. Por favor contacte al administrador.');
+      } else {
+        console.error(`Error ${error.response.status}: ${error.response.data.message || 'Error del servidor'}`);
+        throw new Error(error.response.data.message || 'Error al obtener datos del usuario');
+      }
+    } else if (error.request) {
+      // La solicitud fue hecha pero no se recibió respuesta
+      console.error('No se recibió respuesta del servidor:', error.request);
+      throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
+    } else {
+      // Error en la configuración de la solicitud
+      console.error('Error al configurar la solicitud:', error.message);
+      throw new Error('Error en la aplicación. Por favor contacte al administrador.');
+    }
+  }
+},
 
   verifyEmail: async (token) => {
     try {
@@ -1372,6 +1473,28 @@ updateRoutineExercises: async (routineId, exercisesData) => {
     return response;
   } catch (error) {
     console.error('Error al actualizar ejercicios de rutina:', error);
+    throw error;
+  }
+},
+// Guardar medidas físicas
+savePhysicalMeasurements: async (physicalData) => {
+  try {
+    console.log('Guardando medidas físicas:', physicalData);
+    const response = await axiosInstance.post('/client/physical-measurements', physicalData);
+    return response.data;
+  } catch (error) {
+    console.error('Error al guardar medidas físicas:', error);
+    throw error;
+  }
+},
+
+// Obtener medidas físicas
+getPhysicalMeasurements: async () => {
+  try {
+    const response = await axiosInstance.get('/client/physical-measurements');
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener medidas físicas:', error);
     throw error;
   }
 },
