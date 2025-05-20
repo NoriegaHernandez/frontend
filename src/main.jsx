@@ -26,7 +26,7 @@ import CustomRoutineForm from './pages/coach/CustomRoutineForm';
 import RoutineDetails from './pages/coach/RoutineDetails'
 import ExerciseEditor from './pages/coach/ExerciseEditor';
 // Páginas del administrador
-import AdminDashboard from './pages/admin/Dashboard'
+
 import GestionCoaches from './pages/admin/GestionCoaches'
 import VerifyEmail from './pages/VerifyEmail';
 
@@ -233,7 +233,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           {/* Rutas del administrador */}
           <Route path="/admin/dashboard" element={
             <RoleRoute allowedRoles={['administrador']}>
-              <AdminDashboard />
+              <GestionCoaches />
             </RoleRoute>
           } />
           <Route path="/admin/coaches" element={
@@ -243,7 +243,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           } />
           <Route path="/admin/dashboard" element={
             <RoleRoute allowedRoles={['administrador']}>
-              <AdminDashboard />
+              <GestionCoaches />
             </RoleRoute>
           } />
           <Route path="/admin/coaches" element={
