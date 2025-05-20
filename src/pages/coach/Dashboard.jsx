@@ -933,7 +933,7 @@ const CoachDashboard = () => {
 >
   Crear rutina personalizada
 </button> */}
-                            <button
+                            {/* <button
                               className="coach-button secondary"
                               onClick={() => {
                                 // Cerrar el modal primero
@@ -943,7 +943,7 @@ const CoachDashboard = () => {
                               }}
                             >
                               Crear rutina personalizada
-                            </button>
+                            </button> */}
                           </div>
 
                           {routineSuccess && (
