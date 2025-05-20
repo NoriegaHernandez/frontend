@@ -585,3 +585,211 @@
   background-color: #86efac;
   cursor: not-allowed;
 }
+/* Estilos adicionales para la vista de rutina del cliente */
+
+/* Contenedor principal de la vista de rutina */
+.client-routine-view {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Encabezado de la rutina */
+.routine-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.routine-header h1 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 2rem;
+}
+
+.routine-meta {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.routine-duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #f8f9fa;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Sección de días de entrenamiento */
+.training-days-section {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #dee2e6;
+}
+
+.training-days-section h2 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.training-days-display {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  font-weight: 500;
+  color: #0d6efd;
+}
+
+/* Alerta de día de entrenamiento */
+.today-is-training-day {
+  background-color: #e6f7ff;
+  border-left: 4px solid #0d6efd;
+  padding: 12px 15px;
+  margin-top: 15px;
+  border-radius: 4px;
+}
+
+.training-badge {
+  display: inline-block;
+  background-color: #0d6efd;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+/* Sección de objetivo */
+.routine-objective-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  border: 1px solid #dee2e6;
+}
+
+.routine-objective-section h2 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Sección de ejercicios */
+.exercises-section {
+  margin-bottom: 30px;
+}
+
+.exercises-section h2 {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.exercises-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Estilos para cada elemento de ejercicio */
+.exercise-item {
+  display: flex;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dee2e6;
+}
+
+.exercise-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  background-color: #0d6efd;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.exercise-content {
+  flex: 1;
+  padding: 15px;
+}
+
+.exercise-name {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.exercise-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.exercise-sets-reps {
+  display: flex;
+  gap: 15px;
+}
+
+.exercise-sets, .exercise-reps {
+  background-color: #f8f9fa;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.exercise-rest {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #6c757d;
+}
+
+.exercise-notes {
+  font-style: italic;
+  color: #6c757d;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  padding-top: 10px;
+  border-top: 1px dashed #dee2e6;
+}
+
+/* Pie de página de la rutina */
+.routine-footer {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #dee2e6;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Mensaje de sin rutina */
+.no-routine-container {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.no-routine-icon {
+  font-size: 3rem;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.no-routine-container h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.no-routine-container p {
+  max-width: 500px;
+  margin: 0 auto;
+  color: #6c757d;
+}

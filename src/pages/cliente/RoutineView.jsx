@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import './ClientStyles.css';
 
-const RoutineView = () => {
+const ClienteDashboard = () => {
   const { routineId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -319,4 +319,4 @@ const RoutineView = () => {
   );
 };
 
-export default RoutineView;
+export default ClienteDashboard;

@@ -1579,6 +1579,59 @@ getExercises: async () => {
     return { data: [] };
   }
 },
+// Asignar rutina a cliente con días específicos
+assignRoutineToClientWithDays: async (clientId, routineId, trainingDays, startDate = null, endDate = null) => {
+  try {
+    console.log(`Asignando rutina ${routineId} al cliente ${clientId} con días específicos`);
+    
+    const response = await axiosInstance.post('/coach/assign-routine-with-days', {
+      clientId,
+      routineId,
+      trainingDays,
+      startDate,
+      endDate
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error('Error en assignRoutineToClientWithDays:', error);
+    throw error;
+  }
+},
+getRoutineTrainingDays: async (assignmentId) => {
+  try {
+    console.log(`Obteniendo días de entrenamiento para asignación ${assignmentId}`);
+    const response = await axiosInstance.get(`/client/routine-days/${assignmentId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error en getRoutineTrainingDays:', error);
+    throw error;
+  }
+},
+
+
+getClientActiveRoutine: async () => {
+  try {
+    console.log('Obteniendo rutina activa del cliente');
+    const response = await axiosInstance.get('/client/active-routine');
+    return response.data;
+  } catch (error) {
+    console.error('Error en getClientActiveRoutine:', error);
+    throw error;
+  }
+},
+
+
+getRoutineExercises: async (routineId) => {
+  try {
+    console.log(`Obteniendo ejercicios para rutina ${routineId}`);
+    const response = await axiosInstance.get(`/client/routine-exercises/${routineId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error en getRoutineExercises:', error);
+    throw error;
+  }
+},
 getClientById: async (clientId) => {
   try {
     const response = await axiosInstance.get(`/coach/client/${clientId}`);

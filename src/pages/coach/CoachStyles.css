@@ -3302,3 +3302,81 @@
     width: 100%;
   }
 }
+/* Estilos para la selección de días de entrenamiento en el modal de asignación */
+
+/* Contenedor para los checkboxes de días */
+.days-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+/* Estilo para cada checkbox de día */
+.day-checkbox {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.day-checkbox:hover {
+  background-color: #e9ecef;
+}
+
+/* Estilo para checkbox seleccionado */
+.day-checkbox input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+.day-checkbox input[type="checkbox"]:checked + label {
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+/* Hacer el modal más amplio para acomodar los checkboxes */
+.assign-modal {
+  width: 90%;
+  max-width: 500px;
+}
+
+/* Mejorar el espaciado entre elementos en el modal */
+.modal-body .form-group {
+  margin-bottom: 15px;
+}
+
+.modal-body label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* Información adicional en el modal */
+.modal-info {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 15px;
+  font-size: 0.9em;
+  color: #495057;
+  border-left: 3px solid #0d6efd;
+}
+
+.modal-info p {
+  margin: 5px 0;
+}
+
+/* Resaltar días seleccionados */
+.day-checkbox input[type="checkbox"]:checked + label {
+  font-weight: 600;
+}
+
+.day-checkbox:has(input[type="checkbox"]:checked) {
+  background-color: #e6f2ff;
+  border-color: #0d6efd;
+}
