@@ -35,7 +35,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import './index.css'
 import ClientRoutines from './pages/cliente/ClientRoutines'
-import RoutineView from './pages/cliente/RoutineView'
+
 
 // Componente para verificar el rol del usuario y redirigir
 const RoleRoute = ({ allowedRoles, children }) => {
