@@ -25,7 +25,7 @@ import CoachDashboard from './pages/coach/Dashboard';
 import InformacionCoach from './pages/coach/InformacionCoach';
 import PerfilCoach from './pages/coach/PerfilCoach';
 import CustomRoutine from './pages/coach/CustomRoutine'; // I
-import CustomRoutineForm from './pages/coach/CustomRoutineForm'; // Importado correctamente
+//import CustomRoutineForm from './pages/coach/CustomRoutineForm'; // Importado correctamente
 
 
 
