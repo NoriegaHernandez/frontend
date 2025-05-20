@@ -24,7 +24,7 @@ import CustomRoutine from './pages/coach/CustomRoutine'; // Importado correctame
 import RoutinesManagement from './pages/coach/RoutinesManagement';
 // import CustomRoutineForm from './pages/coach/CustomRoutineForm';
 
-import CustomRoutineForm from './pages/coach/CustomRoutineForm.JSX'; // Importado correctamente
+import CustomRoutineForm from './pages/coach/CustomRoutineForm'; // Importado correctamente
 
 // Páginas del administrador
 import AdminDashboard from './pages/admin/Dashboard'
