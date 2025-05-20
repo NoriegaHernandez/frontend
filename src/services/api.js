@@ -1351,13 +1351,34 @@ requestCoach: async (coachId) => {
 // Reemplaza estos métodos por versiones correctas que usen axiosInstance y async/await
 
 // Métodos para coaches
+// getExercises: async () => {
+//   try {
+//     const response = await axiosInstance.get('/coach/exercises');
+//     return response;
+//   } catch (error) {
+//     console.error('Error al obtener ejercicios:', error);
+//     throw error;
+//   }
+// },
+// Add this function to your api.js file
 getExercises: async () => {
   try {
+    console.log('Solicitando lista de ejercicios disponibles');
     const response = await axiosInstance.get('/coach/exercises');
+    
+    // Verificar la respuesta
+    if (!response.data) {
+      console.warn('No se recibieron datos de ejercicios');
+      return { data: [] };
+    }
+    
+    console.log(`Se encontraron ${response.data.length} ejercicios`);
     return response;
   } catch (error) {
     console.error('Error al obtener ejercicios:', error);
-    throw error;
+    
+    // En caso de error, devolver un array vacío para evitar errores en componentes
+    return { data: [] };
   }
 },
 
@@ -1370,7 +1391,44 @@ getClientById: async (clientId) => {
     throw error;
   }
 },
-
+createCustomRoutine: async (routineData) => {
+  try {
+    console.log('Creando rutina personalizada con datos:', {
+      nombre: routineData.nombre,
+      objetivo: routineData.objetivo,
+      nivel_dificultad: routineData.nivel_dificultad,
+      ejercicios: routineData.ejercicios.length
+    });
+    
+    // Validar datos mínimos
+    if (!routineData.nombre) {
+      throw new Error('El nombre de la rutina es obligatorio');
+    }
+    
+    if (!routineData.ejercicios || routineData.ejercicios.length === 0) {
+      throw new Error('La rutina debe tener al menos un ejercicio');
+    }
+    
+    // Enviar solicitud al servidor
+    const response = await axiosInstance.post('/coach/routine', routineData);
+    
+    console.log('Rutina creada correctamente:', response.data);
+    
+    return response;
+  } catch (error) {
+    console.error('Error al crear rutina personalizada:', error);
+    
+    // Detallar el error para mejor diagnóstico
+    if (error.response) {
+      console.error('Datos del error de respuesta:', {
+        status: error.response.status,
+        data: error.response.data
+      });
+    }
+    
+    throw error;
+  }
+},
 getCoachRoutines: async () => {
   try {
     const response = await axiosInstance.get('/coach/routines');

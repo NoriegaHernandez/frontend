@@ -26,6 +26,7 @@ import InformacionCoach from './pages/coach/InformacionCoach';
 import PerfilCoach from './pages/coach/PerfilCoach';
 import CustomRoutine from './pages/coach/CustomRoutine'; // I
 
+
 // Páginas de administrador
 import AdminDashboard from './pages/admin/Dashboard';
 

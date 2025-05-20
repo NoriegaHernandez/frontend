@@ -651,6 +651,17 @@ const handleAssignRoutine = async () => {
                               Crear rutina personalizada
                             </button> */}
                                       
+{/* <button 
+  className="coach-button secondary"
+  onClick={() => {
+    // Cerrar el modal primero
+    handleCloseDetails();
+    // Navegar a la página de creación de rutina personalizada para este cliente
+    navigate(`/coach/custom-routine/${selectedClient.id_usuario}`);
+  }}
+>
+  Crear rutina personalizada
+</button> */}
 <button 
   className="coach-button secondary"
   onClick={() => {
