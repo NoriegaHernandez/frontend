@@ -684,7 +684,7 @@ const CoachDashboard = () => {
                         </div>
                       </div>
 
-                      {/* Sección de Información Física */}
+                      Sección de Información Física
                       <div className="client-details-section physical-section">
                         <h3>Información Física</h3>
                         {loadingMeasurements ? (
@@ -772,7 +772,7 @@ const CoachDashboard = () => {
                           </>
                         )}
                       </div>
-                      {/* Formulario para registrar medidas */}
+                      {/* Formulario para registrar medidas
                       {registeringMeasurements && (
                         <div className="measurements-form-overlay">
                           <div className="measurements-form-container">
@@ -845,8 +845,7 @@ const CoachDashboard = () => {
                                   />
                                 </div>
 
-                                {/* Agregar los demás campos de medidas */}
-                                {/* ... */}
+                
                               </div>
 
                               <div className="form-group full-width">
@@ -882,7 +881,7 @@ const CoachDashboard = () => {
                             </form>
                           </div>
                         </div>
-                      )}
+                      )} */}
 
                       {/* Sección para asignar rutina */}
                       <div className="client-details-section">

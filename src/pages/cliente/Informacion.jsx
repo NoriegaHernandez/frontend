@@ -563,7 +563,7 @@ const Informacion = () => {
               </div>
             )}
             
-            {/* Nueva sección: Información Física */}
+            {/* Nueva sección: Información Física
             <h2 className="section-title">Información Física</h2>
             
             {!isEditingPhysical ? (
@@ -848,7 +848,7 @@ const Informacion = () => {
                 </div>
               </div>
             )}
-            
+             */}
             <div className="information-section">
               <h3>Información adicional</h3>
               <p>Mantenemos tu información segura y protegida. Si necesitas actualizar algún dato adicional o tienes preguntas sobre tu cuenta, no dudes en contactarnos.</p>
