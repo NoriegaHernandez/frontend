@@ -1544,40 +1544,41 @@ requestCoach: async (coachId) => {
     }
   }
 },
-// Reemplaza estos métodos por versiones correctas que usen axiosInstance y async/await
 
-// Métodos para coaches
 // getExercises: async () => {
 //   try {
+//     console.log('Solicitando lista de ejercicios disponibles');
 //     const response = await axiosInstance.get('/coach/exercises');
+    
+//     // Verificar la respuesta
+//     if (!response.data) {
+//       console.warn('No se recibieron datos de ejercicios');
+//       return { data: [] };
+//     }
+    
+//     console.log(`Se encontraron ${response.data.length} ejercicios`);
 //     return response;
 //   } catch (error) {
 //     console.error('Error al obtener ejercicios:', error);
-//     throw error;
+    
+//     // En caso de error, devolver un array vacío para evitar errores en componentes
+//     return { data: [] };
 //   }
 // },
-// Add this function to your api.js file
+// Obtener todos los ejercicios disponibles
 getExercises: async () => {
   try {
-    console.log('Solicitando lista de ejercicios disponibles');
     const response = await axiosInstance.get('/coach/exercises');
-    
-    // Verificar la respuesta
-    if (!response.data) {
-      console.warn('No se recibieron datos de ejercicios');
-      return { data: [] };
-    }
-    
-    console.log(`Se encontraron ${response.data.length} ejercicios`);
-    return response;
+    // Asegurarse de que la respuesta sea un array
+    return {
+      data: Array.isArray(response.data) ? response.data : []
+    };
   } catch (error) {
     console.error('Error al obtener ejercicios:', error);
-    
-    // En caso de error, devolver un array vacío para evitar errores en componentes
+    // Devolver una estructura consistente incluso en caso de error
     return { data: [] };
   }
 },
-
 getClientById: async (clientId) => {
   try {
     const response = await axiosInstance.get(`/coach/client/${clientId}`);
