@@ -35,7 +35,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import './index.css'
 import ClientRoutines from './pages/cliente/ClientRoutines'
-import RoutineView from './pages/cliente/RoutineView'
+// import RoutineView from './pages/cliente/RoutineView'
 
 
 // Componente para verificar el rol del usuario y redirigir
@@ -120,11 +120,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             </RoleRoute>
           } />
 
-          <Route path="/cliente/routine/:routineId" element={
+          {/* <Route path="/cliente/routine/:routineId" element={
             <RoleRoute allowedRoles={['cliente']}>
               <RoutineView />
             </RoleRoute>
-          } />
+          } /> */}
 
           <Route path="/cliente/routines" element={
             <RoleRoute allowedRoles={['cliente']}>
