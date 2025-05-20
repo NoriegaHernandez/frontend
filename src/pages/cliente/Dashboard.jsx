@@ -765,12 +765,12 @@ const ClienteDashboard = () => {
                                 </div>
                                 
                                 <div className="exercise-content">
-                                    <div className="exercise-image">
+                                    {/* <div className="exercise-image">
                                         <img 
                                             src={exercises[currentExerciseIndex].imagen_url || "/src/assets/images/workout-placeholder.png"} 
                                             alt={exercises[currentExerciseIndex].nombre} 
                                         />
-                                    </div>
+                                    </div> */}
                                     
                                     <div className="exercise-details">
                                         <div className="exercise-stats">
