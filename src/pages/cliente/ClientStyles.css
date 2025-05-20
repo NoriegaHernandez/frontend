@@ -1230,3 +1230,379 @@
     background-color: #ffebee;
     color: #c62828;
 }
+
+/* Añadir al archivo ClientStyles.css */
+.days-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.day-tab {
+    padding: 10px 16px;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.day-tab.active {
+    background-color: #0066cc;
+    color: white;
+}
+
+.day-tab:hover {
+    background-color: #e0e0e0;
+}
+
+.day-tab.active:hover {
+    background-color: #0055bb;
+}
+
+.day-tab.current-routine {
+    border-bottom: 3px solid #0066cc;
+}
+
+.day-tab.other-routine {
+    border-bottom: 3px solid #ff6b00;
+}
+
+.today-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff5722;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.routine-indicator {
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #555;
+}
+
+.routine-groups {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.routine-group {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #0066cc;
+    border-radius: 4px;
+}
+
+.routine-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.routine-name {
+    font-weight: 600;
+}
+
+.routine-days-pills {
+    display: flex;
+    gap: 4px;
+}
+
+.day-pill {
+    background-color: #e0e0e0;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+/* Colores para diferentes rutinas */
+.routine-group:nth-child(1) {
+    border-left-color: #0066cc;
+}
+
+.routine-group:nth-child(2) {
+    border-left-color: #ff6b00;
+}
+
+.routine-group:nth-child(3) {
+    border-left-color: #4caf50;
+}
+
+.routine-group:nth-child(4) {
+    border-left-color: #9c27b0;
+}
+
+.routine-group:nth-child(5) {
+    border-left-color: #2196f3;
+}
+
+/* Estilos para el plan de entrenamiento semanal */
+.training-days-container {
+    margin-bottom: 30px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.training-days-container h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.training-days-container p {
+    margin-bottom: 15px;
+    color: #666;
+}
+
+/* Estilos para los días sin rutina */
+.no-routine-day {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Mejoras visuales para los ejercicios */
+.exercise-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.exercise-header {
+    background-color: #f5f5f5;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.exercise-header h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.exercise-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.exercise-content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+@media (min-width: 768px) {
+    .exercise-content {
+        flex-direction: row;
+    }
+}
+
+.exercise-image {
+    flex: 0 0 250px;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+    .exercise-image {
+        margin-right: 20px;
+        margin-bottom: 0;
+    }
+}
+
+.exercise-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.exercise-details {
+    flex: 1;
+}
+
+.exercise-stats {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    flex: 1;
+    text-align: center;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0066cc;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.exercise-instructions {
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.exercise-notes {
+    background-color: #fff9c4;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.exercise-muscles {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.navigation-buttons {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #e0e0e0;
+}
+
+.nav-button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background-color: #0066cc;
+    color: white;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.nav-button:hover {
+    background-color: #0055bb;
+}
+
+/* Estilos para el mensaje de "Hoy toca entrenar" */
+.today-is-training-day {
+    background-color: #e8f5e9;
+    border-left: 4px solid #43a047;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.training-badge {
+    background-color: #43a047;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.today-is-training-day p {
+    margin: 0;
+    font-weight: 500;
+    color: #2e7d32;
+}
+
+/* Vista calendario semanal */
+.weekly-calendar {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.day-column {
+    flex: 1 0 150px;
+    min-width: 150px;
+    border-right: 1px solid #e0e0e0;
+    padding: 10px;
+}
+
+.day-column:last-child {
+    border-right: none;
+}
+
+.day-header {
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 10px;
+}
+
+.day-name {
+    font-weight: 600;
+    display: block;
+}
+
+.is-today {
+    color: #0066cc;
+    font-weight: 700;
+}
+
+.day-content {
+    min-height: 100px;
+}
+
+.routine-card {
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.routine-card-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.routine-card-meta {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.no-routine-card {
+    border: 1px dashed #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+    color: #999;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

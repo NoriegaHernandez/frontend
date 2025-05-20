@@ -1675,16 +1675,16 @@ getAssignmentDays: async (assignmentId) => {
     return { data: [] };
   }
 },
-getRoutineTrainingDays: async (assignmentId) => {
-  try {
-    console.log(`Obteniendo días de entrenamiento para asignación ${assignmentId}`);
-    const response = await axiosInstance.get(`/client/routine-days/${assignmentId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error en getRoutineTrainingDays:', error);
-    throw error;
-  }
-},
+// getRoutineTrainingDays: async (assignmentId) => {
+//   try {
+//     console.log(`Obteniendo días de entrenamiento para asignación ${assignmentId}`);
+//     const response = await axiosInstance.get(`/client/routine-days/${assignmentId}`);
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error en getRoutineTrainingDays:', error);
+//     throw error;
+//   }
+// },
 
 
 // getClientActiveRoutine: async () => {
@@ -1699,6 +1699,20 @@ getRoutineTrainingDays: async (assignmentId) => {
 // },
 
 // En api.js
+// getClientActiveRoutine: async (day) => {
+//     try {
+//         let url = '/client/active-routine';
+//         if (day) {
+//             url += `?day=${day}`;
+//         }
+//         const response = await axiosInstance.get(url);
+//         return response;
+//     } catch (error) {
+//         console.error('Error al obtener rutina activa:', error);
+//         return { data: null };
+//     }
+// },
+// En api.js de cliente
 getClientActiveRoutine: async (day) => {
     try {
         let url = '/client/active-routine';
@@ -1713,6 +1727,15 @@ getClientActiveRoutine: async (day) => {
     }
 },
 
+getRoutineTrainingDays: async (assignmentId) => {
+    try {
+        const response = await axiosInstance.get(`/client/routine-days/${assignmentId}`);
+        return response;
+    } catch (error) {
+        console.error('Error al obtener días de entrenamiento:', error);
+        return { data: [] };
+    }
+},
 getClientRoutines: async () => {
     try {
         const response = await axiosInstance.get('/client/routines');
