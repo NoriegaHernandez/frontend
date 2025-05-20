@@ -5,8 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/Auth.css';
 
 const iconPaths = {
-  usuario: '/usuario.png',
-  apellido: '/usuario.png',
+  usuario: '/Usuario.png',
+  apellido: '/Usuario.png',
   contraseña: '/contra.png',
   correo: '/correo.png',
   telefono: '/telefono.png',
